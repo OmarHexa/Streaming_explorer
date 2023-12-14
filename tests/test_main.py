@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -27,19 +25,24 @@ def test_get_first_five_rows(client):
 
 def test_get_show_by_id(client):
     """Test the endpoint to get a show by its ID."""
-    # Assuming there is a show with show_id 'example_id' in your dataset
-    response = client.get("/shows/example_id")
+    # Assuming there is a show with show_id 's1' in your dataset
+    response = client.get("/shows/s1")
     assert response.status_code == 200
-    assert response.json()["show_id"] == "example_id"
+    assert response.json()["show_id"] == "s1"
 
 
 def test_create_show(client):
     """Test the endpoint to create a new show."""
     new_show = {
-        "show_id": "new_show_id",
+        "show_id": "s9999",
         "type": "Movie",
         "title": "New Show",
+        "director": "unknown",
+        "cast": "unknown",
+        "country": "unknown",
+        "date_added": "unknown",
         "release_year": 2022,
+        "rating": "unknown",
         "duration": "1h30m",
         "listed_in": "Comedy",
         "description": "A new show",
@@ -49,22 +52,27 @@ def test_create_show(client):
     assert response.status_code == 201
     assert response.json() == new_show
 
-    # Clean up: Delete the created show
-    response = client.delete("/shows/new_show_id")
-    assert response.status_code == 200
+    # # Clean up: Delete the created show
+    # response = client.delete("/shows/s9999")
+    # assert response.status_code == 200
 
 
 def test_update_show(client):
     """Test the endpoint to update a show."""
-    show_id = "example_id"
+    show_id = "s9999"
     updated_show = {
         "show_id": show_id,
-        "type": "TV Show",
-        "title": "Updated Show",
-        "release_year": 2023,
-        "duration": "2 seasons",
-        "listed_in": "Drama",
-        "description": "An updated show",
+        "type": "Movie",
+        "title": "New Show",
+        "director": "unknown",
+        "cast": "unknown",
+        "country": "unknown",
+        "date_added": "unknown",
+        "release_year": 2022,
+        "rating": "unknown",
+        "duration": "1h30m",
+        "listed_in": "Comedy",
+        "description": "A new show",
     }
 
     response = client.put(f"/shows/{show_id}", json=updated_show)
@@ -74,8 +82,7 @@ def test_update_show(client):
 
 def test_delete_show(client):
     """Test the endpoint to delete a show."""
-    # Assuming there is a show with show_id 'example_id' in your dataset
-    show_id = "example_id"
+    show_id = "s9999"
 
     response = client.delete(f"/shows/{show_id}")
     assert response.status_code == 200

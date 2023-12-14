@@ -1,6 +1,4 @@
-import json
-import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException, status
@@ -11,6 +9,7 @@ from pydantic import BaseModel, validator
 app = FastAPI()
 
 # Load initial data
+global data
 data = pd.read_csv("./Data/processed/netflix.csv")
 
 
@@ -25,33 +24,30 @@ class ShowData(BaseModel):
     date_added: Optional[str] = None
     release_year: int
     rating: Optional[str] = None
-    duration: str
-    listed_in: str
-    description: str
-
-    # class Config:
-    #     validate_assignment = True  # Enable validation for optional fields
-
-    # @validator("show_id", pre=True, always=True)
-    # def validate_show_id(cls, value):
-    #     # Validate show_id uniqueness here, e.g., using a database query
-    #     # For simplicity, assuming show_id is unique in this example
-    #     return value
+    duration: Optional[str] = None
+    listed_in: Optional[str] = None
+    description: Optional[str] = None
 
 
 # CRUD operations
 
 
-@app.get("/", response_model=str)
+@app.get("/", response_model=Dict)
 def index():
-    """Welcome message for the API."""
+    """Welcome message for the API.
+
+    It does nothing just to avoid starting error in the server.
+    """
     return {"message": "Welcome to the app"}
 
 
 # Get the first 5 rows
 @app.get("/shows/", response_model=List[ShowData])
 def get_first_five_rows():
-    """Retrieve the first 5 rows from the dataset."""
+    """Retrieve the first 5 rows from the dataset.
+
+    returns a list of showdata.
+    """
     return data.head(5).to_dict(orient="records")
 
 
@@ -62,21 +58,20 @@ def get_show_by_id(show_id: str):
     show_data = data[data["show_id"] == show_id].to_dict(orient="records")
     if not show_data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Show not found")
-    return show_data[0]
+    return show_data[0]  # Wrapped around list [], so [0] indexing to only return the dict
 
 
 # Create a new show
 @app.post("/shows/", response_model=ShowData, status_code=status.HTTP_201_CREATED)
 def create_show(show: ShowData):
     """Create a new show in the dataset."""
-    global data
     if show.show_id in data["show_id"].values:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Show ID already exists"
         )
 
     new_show = show.dict()
-    data = data.append(new_show, ignore_index=True)
+    data.loc[len(data)] = new_show
     return show
 
 
@@ -84,11 +79,14 @@ def create_show(show: ShowData):
 @app.put("/shows/{show_id}", response_model=ShowData)
 def update_show(show_id: str, updated_show: ShowData):
     """Update a show in the dataset by show_id."""
-    show_data = data[data["show_id"] == show_id]
-    if show_data.empty:
+    show_index = data[data["show_id"] == show_id].index
+    if show_index.empty:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Show not found")
 
-    data.loc[data["show_id"] == show_id] = updated_show.dict()
+    show_index = show_index[0]  # Extract the index value
+    for key, value in updated_show.dict().items():
+        data.at[show_index, key] = value
+
     return updated_show
 
 
