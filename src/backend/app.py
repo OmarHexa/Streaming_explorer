@@ -41,14 +41,13 @@ def index():
     return {"message": "Welcome to the app"}
 
 
-# Get the first 5 rows
+# Update the FastAPI endpoint to accept an index parameter
 @app.get("/shows/", response_model=List[ShowData])
-def get_first_five_rows():
-    """Retrieve the first 5 rows from the dataset.
-
-    returns a list of showdata.
-    """
-    return data.head(5).to_dict(orient="records")
+def get_shows(index: int = 0, limit: int = 10):
+    """Retrieve the shows from the dataset based on the provided index and limit."""
+    start_index = index
+    end_index = start_index + limit
+    return data.iloc[start_index:end_index].to_dict(orient="records")
 
 
 # Get a specific row by show_id

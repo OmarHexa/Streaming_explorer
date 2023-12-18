@@ -5,13 +5,13 @@
 requirements.yml file contains the necessary packages to run the code in this repository. To install the packages, run the following command:
 
 ```
-conda env create -f requirements.yml
+conda env create -f environment.yaml
 ```
 
 requirements.yml is generated using the following command:
 
 ```
-conda env export --no-builds | grep -v "prefix" > requirements.yml
+conda env export --no-builds | grep -v "prefix" > environment.yaml
 ```
 
 ## Pre-Commit hooks

@@ -1,10 +1,12 @@
+from typing import Dict, List
+
 import requests
 import streamlit as st
 
-from main import ShowData
+from src.backend.app import ShowData
 
 
-def updateFormWidget(options):
+def updateFormWidget(options: List[str]):
     """Generates a Streamlit sidebar widget for updating a show with dynamic fields.
 
     Parameters:
@@ -42,7 +44,7 @@ def updateFormWidget(options):
     return st.session_state.input_dict
 
 
-def request_with_error_handling(api_url, route, method="get", data=None):
+def request_with_error_handling(api_url: str, route: str, method: str = "get", data: Dict = None):
     """Makes an HTTP request to the specified API endpoint with error handling.
 
     Parameters:
@@ -72,7 +74,7 @@ def request_with_error_handling(api_url, route, method="get", data=None):
         st.error(f"An error occurred: {e}")
 
 
-def CRUDSidebarWidget(CRUDAPI_URL):
+def CRUDSidebarWidget(CRUDAPI_URL: str):
     """Streamlit sidebar widget for CRUD operations on a show database.
 
     Parameters:
@@ -81,6 +83,8 @@ def CRUDSidebarWidget(CRUDAPI_URL):
     Returns:
     None
     """
+    # Sidebar for user input
+    st.sidebar.header("User Input")
     show_id_input = st.sidebar.text_input("Enter show_id for specific show:")
 
     # Display specific show by show_id
@@ -125,3 +129,42 @@ def CRUDSidebarWidget(CRUDAPI_URL):
         if deleted_show:
             st.write("Deleted Show:")
             st.dataframe(deleted_show)
+
+
+def fetch_and_display_shows(FASTAPI_URL):
+    """Initialize a global variable to store the current index.
+
+    Fetch shows based on the current index and display them. Allow loading the next 10 shows with a
+    "Next" button.
+    """
+    if "current_index" not in st.session_state:
+        st.session_state.current_index = 0
+
+    # Function to fetch shows based on the current index
+    def get_shows(index, limit):
+        return request_with_error_handling(
+            FASTAPI_URL, f"shows/?index={index}&limit={limit}", method="get"
+        )
+
+    container = st.container(border=False)
+    # Display the initial 10 shows
+    with container:
+        if st.session_state.current_index == 0:
+            shows = get_shows(st.session_state.current_index, 10)
+            if shows:
+                st.write(
+                    f":gray[Shows]: {st.session_state.current_index+1} - {st.session_state.current_index+10}"
+                )
+                st.dataframe(shows)
+                st.session_state.current_index += 10
+
+    # Display the next 10 shows with a "Next" button
+    if st.button("Next"):
+        with container:
+            next_shows = get_shows(st.session_state.current_index, 10)
+            if next_shows:
+                st.write(
+                    f":gray[Shows]: {st.session_state.current_index+1} - {st.session_state.current_index+10}"
+                )
+                st.dataframe(next_shows)
+            st.session_state.current_index += 10

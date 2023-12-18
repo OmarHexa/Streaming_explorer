@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from main import app
+from src.backend.app import app
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def test_get_first_five_rows(client):
     """Test the endpoint to get the first 5 rows."""
     response = client.get("/shows/")
     assert response.status_code == 200
-    assert len(response.json()) == 5
+    assert len(response.json()) == 10
 
 
 def test_get_show_by_id(client):
