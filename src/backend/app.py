@@ -22,8 +22,8 @@ class ShowData(BaseModel):
     cast: Optional[str] = None
     country: Optional[str] = None
     date_added: Optional[str] = None
-    release_year: int
-    rating: Optional[str] = None
+    release_year: Optional[int] = None
+    rating: str
     duration: Optional[str] = None
     listed_in: Optional[str] = None
     description: Optional[str] = None

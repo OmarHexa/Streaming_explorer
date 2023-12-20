@@ -4,16 +4,34 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 import streamlit as st
 
-from src.frontend.common.Widget import CRUDSidebarWidget, fetch_and_display_shows
+from src.backend.app import ShowData
+from src.frontend.common.components import ShowEditorHandler, ShowsViewHandler
+
+st.set_page_config(
+    page_title="Home",
+    page_icon="🎥",
+)
+#    menu_items={"About": "something"})
 
 # FastAPI backend URL
 FASTAPI_URL = "http://127.0.0.1:8000"
+# This removes the default menu button on the top right of the screen
+st.markdown("<style>#MainMenu{visibility:hidden;}</style>", unsafe_allow_html=True)
 
 # Streamlit app
-st.title(":red[Netflix Shows CRUD App]")
+st.title(
+    ":red[Streaming Explorer]",
+)
 
-fetch_and_display_shows(FASTAPI_URL)
+# Create a container for shows
+shows_container = st.container()
 
+# Display shows
+shows_viewer = ShowsViewHandler(container=shows_container)
+options = list(ShowData.__annotations__.keys())
+show_editor = ShowEditorHandler(options)
 
-# Creates the sidebar widget
-CRUDSidebarWidget(FASTAPI_URL)
+shows_viewer.render_shows()
+# Display buttons for Create Show and Edit Show
+show_editor.create_show()
+show_editor.edit_show()
