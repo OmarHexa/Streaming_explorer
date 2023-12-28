@@ -4,7 +4,7 @@ import numpy as np
 import git
 
 repo_path = git.Repo('.', search_parent_directories=True).working_tree_dir
-data_path = repo_path + '/data/netflix_titles.csv'
+data_path = repo_path + '/data/raw/netflix_titles.csv'
 
 # filter movies by year, genre, director, actor, country, rating, etc.
 # Assuming you have a DataFrame named 'df' with the Netflix data
