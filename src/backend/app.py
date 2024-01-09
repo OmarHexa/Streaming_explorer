@@ -1,35 +1,21 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import pandas as pd
+import rootutils
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, validator
 
+rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
+import os
+
+from dotenv import load_dotenv
+
+from src.backend.schema import ShowSchema
+
+load_dotenv()
+DATA_DIR = os.getenv("DATA_DIR")
 # initialize the fastapi handler
 app = FastAPI()
-
-# Load initial data
-global data
-data = pd.read_csv("./Data/processed/netflix.csv")
-
-
-# Define Pydantic model for the dataset
-class ShowData(BaseModel):
-    show_id: str
-    type: str
-    title: str
-    director: Optional[str] = None
-    cast: Optional[str] = None
-    country: Optional[str] = None
-    date_added: Optional[str] = None
-    release_year: Optional[int] = None
-    rating: str
-    duration: Optional[str] = None
-    listed_in: Optional[str] = None
-    description: Optional[str] = None
-
-
-# CRUD operations
 
 
 @app.get("/", response_model=Dict)
@@ -41,8 +27,17 @@ def index():
     return {"message": "Welcome to the app"}
 
 
+# ***CRUD operations on pandas dataframe ***
+
+# Load initial data
+global data
+files = os.listdir(DATA_DIR)
+data = pd.read_csv(os.path.join(DATA_DIR, files[0]))
+print(data.iloc[0])
+
+
 # Update the FastAPI endpoint to accept an index parameter
-@app.get("/shows/", response_model=List[ShowData])
+@app.get("/shows/", response_model=List[ShowSchema])
 def get_shows(index: int = 0, limit: int = 10):
     """Retrieve the shows from the dataset based on the provided index and limit."""
     start_index = index
@@ -51,7 +46,7 @@ def get_shows(index: int = 0, limit: int = 10):
 
 
 # Get a specific row by show_id
-@app.get("/shows/{show_id}", response_model=ShowData)
+@app.get("/shows/{show_id}", response_model=ShowSchema)
 def get_show_by_id(show_id: str):
     """Retrieve a specific row by show_id."""
     show_data = data[data["show_id"] == show_id].to_dict(orient="records")
@@ -61,8 +56,8 @@ def get_show_by_id(show_id: str):
 
 
 # Create a new show
-@app.post("/shows/", response_model=ShowData, status_code=status.HTTP_201_CREATED)
-def create_show(show: ShowData):
+@app.post("/shows/", response_model=ShowSchema, status_code=status.HTTP_201_CREATED)
+def create_show(show: ShowSchema):
     """Create a new show in the dataset."""
     if show.show_id in data["show_id"].values:
         raise HTTPException(
@@ -75,8 +70,8 @@ def create_show(show: ShowData):
 
 
 # Update a show by show_id
-@app.put("/shows/{show_id}", response_model=ShowData)
-def update_show(show_id: str, updated_show: ShowData):
+@app.put("/shows/{show_id}", response_model=ShowSchema)
+def update_show(show_id: str, updated_show: ShowSchema):
     """Update a show in the dataset by show_id."""
     show_index = data[data["show_id"] == show_id].index
     if show_index.empty:
@@ -90,7 +85,7 @@ def update_show(show_id: str, updated_show: ShowData):
 
 
 # Delete a show by show_id
-@app.delete("/shows/{show_id}", response_model=ShowData)
+@app.delete("/shows/{show_id}", response_model=ShowSchema)
 def delete_show(show_id: str):
     """Delete a show from the dataset by show_id."""
     show_data = data[data["show_id"] == show_id]

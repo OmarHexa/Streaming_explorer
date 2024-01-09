@@ -4,7 +4,7 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 import streamlit as st
 
-from src.backend.app import ShowData
+from src.backend.schema import ShowSchema
 from src.frontend.common.components import ShowEditorHandler, ShowsViewHandler
 
 st.set_page_config(
@@ -28,7 +28,7 @@ shows_container = st.container()
 
 # Display shows
 shows_viewer = ShowsViewHandler(container=shows_container)
-options = list(ShowData.__annotations__.keys())
+options = list(ShowSchema.__annotations__.keys())
 show_editor = ShowEditorHandler(options)
 
 shows_viewer.render_shows()

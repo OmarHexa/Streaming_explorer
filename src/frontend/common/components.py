@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import streamlit as st
 
-from src.backend.app import ShowData
+from src.backend.schema import ShowSchema
 from src.frontend.common.utils import request_with_error_handling
 
 # Alias for session state
