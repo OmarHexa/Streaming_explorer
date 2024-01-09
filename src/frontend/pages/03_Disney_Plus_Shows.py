@@ -6,14 +6,30 @@ import git
 repo_path = git.Repo('.', search_parent_directories=True).working_tree_dir
 data_path = repo_path + '/data/raw/disney_plus_shows.csv'
 
-# columns = ['imdb_id', 'title', 'plot', 'type', 'rated', 'year', 'released_at',
-#        'added_at', 'runtime', 'genre', 'director', 'writer', 'actors',
-#        'language', 'country', 'awards', 'metascore', 'imdb_rating',
-#        'imdb_votes']
+columns = ['imdb_id', 'title', 'plot', 'type', 'rated', 'year', 'released_at',
+       'added_at', 'runtime', 'genre', 'director', 'writer', 'actors',
+       'language', 'country', 'awards', 'metascore', 'imdb_rating',
+       'imdb_votes']
 
 # Assuming you have a DataFrame named 'df' with the Disney+ data
 # Load data
 df = pd.read_csv(data_path)
+
+# get rid of extra characters in year column
+
+
+# convert year column to int
+
+
+# drop rows if imdb_id and title are both null
+df = df.dropna(subset=['imdb_id', 'title'])
+
+# create imdb links
+def make_clickable(url, name):
+    return '<a href="{}" rel="noopener noreferrer" target="_blank">{}</a>'.format(url,name)
+
+df['imdb_link'] = df.apply(lambda row: make_clickable('https://www.imdb.com/title/' + str(row['imdb_id']), str(row['imdb_id'])), axis=1)
+
 
 # Get unique values for the filters
 unique_years = ['All'] + df['year'].unique().tolist()
@@ -49,4 +65,4 @@ else:
 
 # Display the filtered DataFrame
 st.title("Disney+ Shows")
-st.write(filtered_df)
+st.markdown(filtered_df[['imdb_link', 'title', 'year', 'genre', 'director', 'actors', 'country', 'imdb_rating']].to_html(escape=False), unsafe_allow_html=True)
