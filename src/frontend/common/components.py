@@ -93,7 +93,8 @@ class ShowEditorHandler:
     """
 
     def __init__(self, options: List[str], url: str = "http://localhost:8000"):
-        self.options = options
+        # we dont want to allow show ID editing.
+        self.options = options[1:]
         self.url = url
         if any(key not in ss for key in ["show_create_form", "show_update_form"]):
             self._reset_session_state()
@@ -146,7 +147,7 @@ class ShowEditorHandler:
             col3.button("Add Field :heavy_plus_sign:", on_click=increase_count)
 
         if col1.button(":blue[Submit]"):
-            # st.dataframe(ss.update_dict)
+            st.write(ss.update_dict)
             updated_show = request_with_error_handling(
                 self.url, f"shows/{show_id}", "put", data=ss.update_dict
             )

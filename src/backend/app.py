@@ -76,17 +76,17 @@ def create_show(show: ShowData):
 
 # Update a show by show_id
 @app.put("/shows/{show_id}", response_model=ShowData)
-def update_show(show_id: str, updated_show: ShowData):
+def update_show(show_id: str, updated_show: Dict):
     """Update a show in the dataset by show_id."""
     show_index = data[data["show_id"] == show_id].index
     if show_index.empty:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Show not found")
 
     show_index = show_index[0]  # Extract the index value
-    for key, value in updated_show.dict().items():
+    for key, value in updated_show.items():
         data.at[show_index, key] = value
 
-    return updated_show
+    return data.loc[show_index]
 
 
 # Delete a show by show_id
