@@ -1,5 +1,9 @@
 # Byte by Byte ML
 
+## Datasets Used
+
+1. [Netflix Movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
+
 ## Requirements
 
 requirements.yml file contains the necessary packages to run the code in this repository. To install the packages, run the following command:
