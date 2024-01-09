@@ -18,7 +18,15 @@ requirements.yml is generated using the following command:
 conda env export --no-builds | grep -v "prefix" > environment.yaml
 ```
 
-## Pre-Commit hooks
+#### OR
+
+You can use requirements.txt file to install all the dependencies.
+
+```
+pip install -r requirements.txt
+```
+
+## Pre-Commit hooks for developer
 
 Install pre-commit for static code checking of all files before a new commit.
 
@@ -45,9 +53,11 @@ To start the FastAPI server, you typically use the `uvicorn` command, which is a
 3. Run the following command:
 
    ```bash
-   uvicorn main:app --reload
+   uvicorn src/backend/app:app --reload
    # or directly
-   python main.py
+   python src/backend/app.py
+   # or using make
+   make backend
    ```
 
    - `main` refers to the name of your Python file (`main.py`).
@@ -65,3 +75,23 @@ The `--reload` option is useful during development but can be omitted in a produ
 Make sure to keep the terminal open as long as you want the server to run. If you make changes to your code, the server will automatically reload to apply the changes.
 
 To stop the server, press `Ctrl + C` in the terminal where the server is running.
+
+## Frontend server
+
+To start the streamlit app on your local browser
+
+```bash
+streamlit run src/frontend/home.py
+# or using make
+make frontend
+```
+
+## Initializing the database
+
+To initialize the database, we first need to preprocess the raw dataset downloaded from kaggel. First, open the preprocessed.ipynb jupyter notebook. Follow the notebook to initialize the database.
+
+- Run the data cleaning code to remove NaN values.
+- Save the cleaned data inside a processed folder
+- Load the cleaned data into your mysql database.
+
+Remember to Download the datasets from kaggel and create a directory named `Data` and save the dataset inside the folder.

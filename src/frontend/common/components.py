@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import streamlit as st
 
-from src.backend.app import ShowData
+from src.backend.schema import ShowSchema
 from src.frontend.common.utils import request_with_error_handling
 
 # Alias for session state
@@ -93,7 +93,6 @@ class ShowEditorHandler:
     """
 
     def __init__(self, options: List[str], url: str = "http://localhost:8000"):
-        # we dont want to allow show ID editing.
         self.options = options[1:]
         self.url = url
         if any(key not in ss for key in ["show_create_form", "show_update_form"]):
@@ -242,6 +241,7 @@ class ShowEditorHandler:
             delattr(ss, "field_count")
 
     def _delete_msg(self):
+        """Removes delete msg from the screen."""
         ss.edit_show = True
         ss.delete_msg = True
 

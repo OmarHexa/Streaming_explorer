@@ -3,9 +3,13 @@ fastapi==0.105.0
 uvicorn==0.24.0.post1
 pandas==2.1.4
 streamlit==1.29.0
-
+#Database
+SQLAlchemy==2.0.23
+mysql-connector-python==8.2.0
 # --------- others --------- #
 rootutils==1.0.7     # standardizing the project root setup
 pre-commit==3.6.0      # hooks for applying linters on commit
 rich==13.7.0            # beautiful text formatting in terminal
 pytest==7.4.3          # tests
+
+python-dotenv==1.0.0
