@@ -93,7 +93,7 @@ class ShowEditorHandler:
     """
 
     def __init__(self, options: List[str], url: str = "http://localhost:8000"):
-        self.options = options
+        self.options = options[1:]
         self.url = url
         if any(key not in ss for key in ["show_create_form", "show_update_form"]):
             self._reset_session_state()
@@ -241,6 +241,7 @@ class ShowEditorHandler:
             delattr(ss, "field_count")
 
     def _delete_msg(self):
+        """Removes delete msg from the screen."""
         ss.edit_show = True
         ss.delete_msg = True
 
