@@ -32,6 +32,7 @@ options = list(ShowSchema.__annotations__.keys())
 show_editor = ShowEditorHandler(options)
 
 shows_viewer.render_shows()
+
 # Display buttons for Create Show and Edit Show
 show_editor.create_show()
 show_editor.edit_show()

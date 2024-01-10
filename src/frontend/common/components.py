@@ -37,17 +37,37 @@ class ShowsViewHandler:
     def render_shows(self):
         """Renders shows in the specified container along with next and previous buttons."""
         start_index = max(0, ss.current_showId)
+
+        filter = self.filter_shows()
         # Get shows from the API
         shows = request_with_error_handling(
-            self.fastapi_url, f"shows/?index={start_index}&limit={self.num_shows}", method="get"
+            self.fastapi_url,
+            f"shows/?index={start_index}&limit={self.num_shows}",
+            method="get",
+            data=filter,
         )
-
+        reached_end = False if len(shows) == self.num_shows else True
         # Display the shows in Streamlit
         self.container.write(
-            f":gray[Shows]: {ss.current_showId + 1} - {ss.current_showId + self.num_shows}"
+            f":gray[Shows]: {ss.current_showId + 1} - {ss.current_showId + len(shows)}"
         )
         self.container.dataframe(shows)
-        self._render_buttons()
+        self._render_buttons(reached_end)
+
+    def filter_shows(self):
+        option_dict = request_with_error_handling(self.fastapi_url, "unique", method="get")
+
+        # Create filters in the sidebar with default value set to 'All'
+        selected_year = st.sidebar.selectbox("Year", ["All"] + option_dict["years"], index=0)
+        selected_rating = st.sidebar.selectbox("Rating", ["All"] + option_dict["ratings"], index=0)
+
+        filter = {}
+        if selected_rating != "All":
+            filter["rating"] = selected_rating
+        if selected_year != "All":
+            filter["release_year"] = selected_year
+
+        return filter
 
     def next_shows(self):
         """Updates the current show index to show the next set of shows."""
@@ -58,7 +78,7 @@ class ShowsViewHandler:
         if ss.current_showId > 0:
             ss.current_showId -= self.num_shows
 
-    def _render_buttons(self):
+    def _render_buttons(self, reached_end):
         """Renders next and previous buttons inside the container."""
         # Display next and previous buttons inside the container
         col1, col2 = self.container.columns((7, 1), gap="small")
@@ -70,8 +90,9 @@ class ShowsViewHandler:
 
         with col2:
             # "Next" button
-            if st.button("Next ⏭️", on_click=self.next_shows):
-                pass
+            if not reached_end:  # Check if we have reached the end
+                if st.button("Next ⏭️", on_click=self.next_shows):
+                    pass
 
 
 class ShowEditorHandler:

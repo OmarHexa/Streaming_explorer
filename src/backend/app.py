@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 import rootutils
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Body, Depends, FastAPI, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
@@ -41,10 +41,54 @@ def index():
     return {"message": "Welcome to the app"}
 
 
+@app.get("/unique", response_model=Dict[str, List])
+async def get_unique(db: Session = Depends(get_db)):
+    unique_years = (
+        db.query(ShowModel.release_year).distinct().order_by(ShowModel.release_year.desc()).all()
+    )
+
+    # unique_actors = db.query(ShowModel.cast).distinct().all()
+    # unique_directors = db.query(ShowModel.director).distinct().all()
+    unique_ratings = db.query(ShowModel.rating).distinct().all()
+
+    if not unique_years:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Show not found")
+
+    return {
+        "years": [year[0] for year in unique_years],
+        # "actors": [actor[0] for actor in unique_actors],
+        # "directors": [director[0] for director in unique_directors],
+        "ratings": [rating[0] for rating in unique_ratings],
+    }
+
+
+# @app.get("/shows/", response_model=List[ShowSchema], status_code=status.HTTP_200_OK)
+# def get_shows(db: Annotated[Session, Depends(get_db)], index: int = 0, limit: int = 10):
+#     """Retrieve the shows from the dataset based on the provided index and limit."""
+#     shows = db.query(ShowModel).offset(index).limit(limit).all()
+
+#     # Use jsonable_encoder to convert SQLAlchemy models to dictionaries
+#     shows_dict = jsonable_encoder(shows)
+
+#     return shows_dict
+
+
 @app.get("/shows/", response_model=List[ShowSchema], status_code=status.HTTP_200_OK)
-def get_shows(db: Annotated[Session, Depends(get_db)], index: int = 0, limit: int = 10):
-    """Retrieve the shows from the dataset based on the provided index and limit."""
-    shows = db.query(ShowModel).offset(index).limit(limit).all()
+def get_shows(
+    db: Annotated[Session, Depends(get_db)],
+    index: int = Query(0, description="Index to start retrieving shows", ge=0),
+    limit: int = Query(10, description="Number of shows to retrieve", ge=1, le=50),
+    filters: dict = Body(None, description="Filter shows based on column name and value"),
+):
+    """Retrieve the shows from the dataset based on the provided index, limit, and filters."""
+    query = db.query(ShowModel)
+    # Apply filters if provided
+    if filters:
+        for column, value in filters.items():
+            query = query.filter(getattr(ShowModel, column) == value)
+
+    # Apply offset and limit
+    shows = query.offset(index).limit(limit).all()
 
     # Use jsonable_encoder to convert SQLAlchemy models to dictionaries
     shows_dict = jsonable_encoder(shows)
