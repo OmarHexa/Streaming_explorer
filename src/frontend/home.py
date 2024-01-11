@@ -17,22 +17,14 @@ st.set_page_config(
 FASTAPI_URL = "http://127.0.0.1:8000"
 # This removes the default menu button on the top right of the screen
 st.markdown("<style>#MainMenu{visibility:hidden;}</style>", unsafe_allow_html=True)
-
+A, B, C = st.columns((1, 2, 1))
 # Streamlit app
-st.title(
+B.title(
     ":red[Streaming Explorer]",
 )
-
-# Create a container for shows
-shows_container = st.container()
-
-# Display shows
-shows_viewer = ShowsViewHandler(container=shows_container)
-options = list(ShowSchema.__annotations__.keys())
-show_editor = ShowEditorHandler(options)
-
-shows_viewer.render_shows()
-
-# Display buttons for Create Show and Edit Show
-show_editor.create_show()
-show_editor.edit_show()
+st.header("Welcome to the home page")
+st.write(
+    "This web app presents a comprehensive exploration of shows available on popular streaming platforms - Netflix, Amazon Prime, and Disney+.\
+          Users can effortlessly navigate through a vast collection of shows, applying filters based on release year and age ratings. \
+         Get insights into the dataset with our Exploratory Data Analysis results. Understand trends, distributions, and key statistics about the shows available on these platforms."
+)
