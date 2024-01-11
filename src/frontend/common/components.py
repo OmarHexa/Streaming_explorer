@@ -10,20 +10,22 @@ ss = st.session_state
 
 
 class ShowsViewHandler:
-    def __init__(self, container, fastapi_url: str = "http://localhost:8000", num_shows: int = 10):
+    def __init__(
+        self, container, fastapi_url: str = "http://localhost:8000", channel: str = "netflix"
+    ):
         """Initializes a ShowsViewHandler instance.
 
         Parameters:
         - container (streamlit.container.Container): The container to display shows and buttons.
         - fastapi_url (str): The URL of the FastAPI server. Default is "http://localhost:8000".
-        - num_shows (int): The number of shows to display. Default is 10.
+        - channel (str): The streaming service to display shows from. Default is Netflix.
 
         Example:
             # Create a Streamlit container
             my_container = st.container()
 
-            # Initialize ShowsViewHandler
-            shows_handler = ShowsViewHandler(container=my_container, fastapi_url="http://example.com/api", num_shows=10)
+            # Initialize ShowsViewHandler with a specific streaming service (e.g., Disney+)
+            shows_handler = ShowsViewHandler(container=my_container, fastapi_url="http://example.com/api", channel="disney")
 
             # Render shows
             shows_handler.render_shows()
@@ -32,7 +34,8 @@ class ShowsViewHandler:
         if "current_showId" not in st.session_state:
             ss.current_showId = 0
         self.container = container
-        self.num_shows = num_shows
+        self.num_shows = 10
+        self.channel = channel
 
     def render_shows(self):
         """Renders shows in the specified container along with next and previous buttons."""
@@ -42,7 +45,7 @@ class ShowsViewHandler:
         # Get shows from the API
         shows = request_with_error_handling(
             self.fastapi_url,
-            f"shows/?index={start_index}&limit={self.num_shows}",
+            f"{self.channel}/shows?index={start_index}&limit={self.num_shows}",
             method="get",
             data=filter,
         )
@@ -55,9 +58,12 @@ class ShowsViewHandler:
         self._render_buttons(reached_end)
 
     def filter_shows(self):
-        option_dict = request_with_error_handling(self.fastapi_url, "unique", method="get")
+        option_dict = request_with_error_handling(
+            self.fastapi_url, f"{self.channel}/unique", method="get"
+        )
 
         # Create filters in the sidebar with default value set to 'All'
+        st.sidebar.header("Filter")
         selected_year = st.sidebar.selectbox("Year", ["All"] + option_dict["years"], index=0)
         selected_rating = st.sidebar.selectbox("Rating", ["All"] + option_dict["ratings"], index=0)
 
@@ -113,9 +119,12 @@ class ShowEditorHandler:
         show_editor_handler.edit_show()
     """
 
-    def __init__(self, options: List[str], url: str = "http://localhost:8000"):
+    def __init__(
+        self, options: List[str], url: str = "http://localhost:8000", channel: str = "netflix"
+    ):
         self.options = options[1:]
         self.url = url
+        self.channel = channel
         if any(key not in ss for key in ["show_create_form", "show_update_form"]):
             self._reset_session_state()
 
@@ -133,7 +142,7 @@ class ShowEditorHandler:
 
         if submitted:
             created_show = request_with_error_handling(
-                self.url, "shows/", method="post", data=new_show
+                self.url, f"{self.channel}/shows", method="post", data=new_show
             )
             if created_show:
                 st.write("New Show Created:")
@@ -169,7 +178,7 @@ class ShowEditorHandler:
         if col1.button(":blue[Submit]"):
             st.write(ss.update_dict)
             updated_show = request_with_error_handling(
-                self.url, f"shows/{show_id}", "put", data=ss.update_dict
+                self.url, f"{self.channel}/{show_id}", "put", data=ss.update_dict
             )
             if updated_show:
                 st.write("Update show:")
@@ -208,7 +217,7 @@ class ShowEditorHandler:
 
     def check_show_exist(self, show_id):
         """Check if the show exist in database server."""
-        show = request_with_error_handling(self.url, f"shows/{show_id}")
+        show = request_with_error_handling(self.url, f"{self.channel}/{show_id}")
         if show:
             _, center, _ = st.columns((1, 1, 1))
             center.write(f"Current Details of the Show: :grey[{show_id.capitalize()}]:")
