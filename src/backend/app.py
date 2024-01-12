@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 
-from backend.recommender import recommend_similar_shows
 from src.backend.database.mysql.config import engine
 from src.backend.database.mysql.model import Base
+from src.backend.recommender import recommend_similar_shows
 from src.backend.routes.amazon import amazon_router
 from src.backend.routes.disney import disney_router
 from src.backend.routes.netflix import netflix_router
