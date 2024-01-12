@@ -3,6 +3,7 @@ from typing import Dict, List
 import rootutils
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
@@ -10,13 +11,87 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 from src.backend.database.mysql.model import AmazonModel
 from src.backend.dependencies import get_db
+from src.backend.eda_func import (
+    country_prod_plot,
+    genres_plot,
+    rating_plot,
+    yearly_show_plot,
+)
 from src.backend.schema import ShowSchema
 
 amazon_router = APIRouter(prefix="/amazon", tags=["Amazon prime"])
 
 
+@amazon_router.get("/yearlyShowPlot", response_model=None)
+def get_yearly_plot():
+    """Get yearly show plot data for Amazon Prime Video.
+
+    Returns:
+    - JSONResponse: The plot data in JSON format.
+    """
+    try:
+        plot = yearly_show_plot("amazon")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@amazon_router.get("/ratingPlot", response_model=None)
+def get_rating_plot():
+    """Get rating plot data for Amazon Prime Video.
+
+    Returns:
+    - JSONResponse: The plot data in JSON format.
+    """
+    try:
+        plot = rating_plot("amazon")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@amazon_router.get("/genresPlot", response_model=None)
+def get_geners_plot():
+    """Get genres plot data for Amazon Prime Video.
+
+    Returns:
+    - JSONResponse: The plot data in JSON format.
+    """
+    try:
+        plot = genres_plot("amazon")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@amazon_router.get("/countryProdPlot", response_model=None)
+def get_country_plot():
+    """Get country production plot data for Amazon Prime Video.
+
+    Returns:
+    - JSONResponse: The plot data in JSON format.
+    """
+    try:
+        plot = country_prod_plot("amazon")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
 @amazon_router.get("/unique", response_model=Dict[str, List])
-async def get_unique(db: Session = Depends(get_db)):
+def get_unique(db: Session = Depends(get_db)):
+    """Get unique data (years and ratings) for Amazon Prime Video.
+
+    Args:
+    - db (Session): The SQLAlchemy database session.
+
+    Returns:
+    - Dict[str, List]: A dictionary containing unique data.
+    """
     unique_years = (
         db.query(AmazonModel.release_year)
         .distinct()

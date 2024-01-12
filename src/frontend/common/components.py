@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List
 
 import streamlit as st
@@ -296,3 +297,80 @@ class ShowEditorHandler:
         ss.show_create_form = True
         ss.edit_show = False
         self._remove_update_form()
+
+
+class PlotlyPlotDisplayer:
+    """A class to fetch and display Plotly charts in Streamlit.
+
+    Parameters:
+    - service (str): The service for which to fetch the plot data.
+    - url (str): The base URL of the FastAPI server.
+
+    Example:
+    ```
+    # Instantiate the PlotlyPlotDisplayer with default parameters
+    plot_displayer = PlotlyPlotDisplayer()
+
+    # Display a plot for a specific endpoint
+    plot_displayer.display_plot(endpoint="yearlyShowPlot")
+    ```
+
+    Methods:
+    - fetch_plot_data(endpoint: str): Fetches the plot data from the specified endpoint.
+    - display_plot(endpoint: str): Displays the fetched plot in Streamlit using st.plotly_chart.
+    """
+
+    def __init__(self, service="netflix", url: str = "http://localhost:8000"):
+        self.api_url = f"{url}/{service}"
+
+    @staticmethod
+    @st.cache_data
+    def _fetch_plot_data(api_url, endpoint):
+        """Fetches the plot data from the specified endpoint. This method is set to be staticmethod
+        because streamlit cannot cache function with self parameters.
+
+        Parameters:
+        - endpoint (str): The endpoint for which to fetch the plot data.
+
+        Returns:
+        - str: The JSON-formatted plot data.
+        """
+        # This function will be cached based on the 'endpoint' argument
+        return request_with_error_handling(api_url, endpoint)
+
+    def display_plot(self, endpoint: str):
+        """Displays the fetched plot in Streamlit using st.plotly_chart.
+
+        Parameters:
+        - endpoint (str): The endpoint for which to display the plot.
+        """
+        plot_data = self._fetch_plot_data(self.api_url, endpoint)
+        if plot_data:
+            st.plotly_chart(json.loads(plot_data))
+
+
+def get_show_recommendations(FASTAPI_URL):
+    """UI and api call handler for the show recommendation section."""
+    st.title("Show Recommendations")
+
+    # Get user input for the show title
+    user_input = st.text_input("Enter a show title:", placeholder="Write name of a show")
+
+    if st.button("Get Recommendations"):
+        if not user_input:
+            st.warning("Please enter a show title.")
+        else:
+            # Request recommendations from the FastAPI endpoint
+            response = request_with_error_handling(
+                FASTAPI_URL, "recommend", method="post", data={"title": user_input}
+            )
+            if response:
+                # Display recommendations
+                for platform, shows in response.items():
+                    st.subheader(f"{platform.capitalize()} Recommendations:")
+                    if shows:
+                        st.dataframe(shows)
+                    else:
+                        st.info(f"No recommendations found for {platform.capitalize()}.")
+            else:
+                st.info("The show you have given doesn't exist in the database")

@@ -3,6 +3,8 @@
 ## Datasets Used
 
 1. [Netflix Movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
+2. [Amazon Prime Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/amazon-prime-movies-and-tv-shows)
+3. [Disney+ Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/disney-movies-and-tv-shows)
 
 ## Requirements
 

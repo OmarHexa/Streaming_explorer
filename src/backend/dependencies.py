@@ -8,6 +8,7 @@ from src.backend.database.mysql.config import SessionLocal
 
 
 def get_db() -> Session:
+    """Yields a SQL database session for the api to query with SQLAlchemy."""
     db = SessionLocal()
     try:
         yield db

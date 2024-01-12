@@ -4,7 +4,11 @@ import streamlit as st
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 from src.backend.schema import ShowSchema
-from src.frontend.common.components import ShowEditorHandler, ShowsViewHandler
+from src.frontend.common.components import (
+    PlotlyPlotDisplayer,
+    ShowEditorHandler,
+    ShowsViewHandler,
+)
 
 st.set_page_config(
     page_title="Disney+",
@@ -31,3 +35,11 @@ shows_viewer.render_shows()
 # # Display buttons for Create Show and Edit Show
 show_editor.create_show()
 show_editor.edit_show()
+
+
+plot_object = PlotlyPlotDisplayer("disney")
+
+plot_object.display_plot("yearlyShowPlot")
+plot_object.display_plot("ratingPlot")
+plot_object.display_plot("genresPlot")
+plot_object.display_plot("countryProdPlot")

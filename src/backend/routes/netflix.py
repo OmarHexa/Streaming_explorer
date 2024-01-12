@@ -3,20 +3,96 @@ from typing import Dict, List
 import rootutils
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 
+from src.backend.database.mysql.config import engine
 from src.backend.database.mysql.model import NetflixModel
 from src.backend.dependencies import get_db
+from src.backend.eda_func import (
+    country_prod_plot,
+    genres_plot,
+    rating_plot,
+    yearly_show_plot,
+)
 from src.backend.schema import ShowSchema
 
 netflix_router = APIRouter(prefix="/netflix", tags=["Netflix"])
 
 
+@netflix_router.get("/yearlyShowPlot", response_model=None)
+def get_yearly_plot():
+    """Endpoint to get the yearly show plot for Netflix.
+
+    Returns:
+        JSONResponse: Plot data in JSON format.
+    """
+    try:
+        plot = yearly_show_plot("netflix")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@netflix_router.get("/ratingPlot", response_model=None)
+def get_rating_plot():
+    """Endpoint to get the rating plot for Netflix.
+
+    Returns:
+        JSONResponse: Plot data in JSON format.
+    """
+    try:
+        plot = rating_plot("netflix")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@netflix_router.get("/genresPlot", response_model=None)
+def get_geners_plot():
+    """Endpoint to get the genres plot for Netflix.
+
+    Returns:
+        JSONResponse: Plot data in JSON format.
+    """
+    try:
+        plot = genres_plot("netflix")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@netflix_router.get("/countryProdPlot", response_model=None)
+def get_country_plot():
+    """Endpoint to get the country production plot for Netflix.
+
+    Returns:
+        JSONResponse: Plot data in JSON format.
+    """
+    try:
+        plot = country_prod_plot("netflix")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
 @netflix_router.get("/unique", response_model=Dict[str, List])
-async def get_unique(db: Session = Depends(get_db)):
+def get_unique(db: Session = Depends(get_db)):
+    """Endpoint to get unique release years, ratings, actors, and directors for Netflix shows.
+
+    Args:
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        Dict[str, List]: Dictionary containing unique years, ratings, actors, and directors.
+    """
     unique_years = (
         db.query(NetflixModel.release_year)
         .distinct()

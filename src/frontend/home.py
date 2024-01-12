@@ -4,8 +4,7 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 import streamlit as st
 
-from src.backend.schema import ShowSchema
-from src.frontend.common.components import ShowEditorHandler, ShowsViewHandler
+from src.frontend.common.components import get_show_recommendations
 
 st.set_page_config(
     page_title="Home",
@@ -28,3 +27,8 @@ st.write(
           Users can effortlessly navigate through a vast collection of shows, applying filters based on release year and age ratings. \
          Get insights into the dataset with our Exploratory Data Analysis results. Understand trends, distributions, and key statistics about the shows available on these platforms."
 )
+
+st.markdown(":blue[Get Show recommendation from all platform]")
+
+
+get_show_recommendations(FASTAPI_URL)
