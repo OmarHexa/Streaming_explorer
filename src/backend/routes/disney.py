@@ -3,6 +3,7 @@ from typing import Dict, List
 import rootutils
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
@@ -10,13 +11,87 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 from src.backend.database.mysql.model import DisneyModel
 from src.backend.dependencies import get_db
+from src.backend.eda_func import (
+    country_prod_plot,
+    genres_plot,
+    rating_plot,
+    yearly_show_plot,
+)
 from src.backend.schema import ShowSchema
 
 disney_router = APIRouter(prefix="/disney", tags=["Disney+"])
 
 
+@disney_router.get("/yearlyShowPlot", response_model=None)
+def get_yearly_plot():
+    """Get yearly show plot for Disney.
+
+    Returns:
+        JSONResponse: JSON response containing the yearly show plot.
+    """
+    try:
+        plot = yearly_show_plot("disney")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@disney_router.get("/ratingPlot", response_model=None)
+def get_rating_plot():
+    """Get rating plot for Disney.
+
+    Returns:
+        JSONResponse: JSON response containing the rating plot.
+    """
+    try:
+        plot = rating_plot("disney")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@disney_router.get("/genresPlot", response_model=None)
+def get_geners_plot():
+    """Get genres plot for Disney.
+
+    Returns:
+        JSONResponse: JSON response containing the genres plot.
+    """
+    try:
+        plot = genres_plot("disney")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@disney_router.get("/countryProdPlot", response_model=None)
+def get_country_plot():
+    """Get country production plot for Disney.
+
+    Returns:
+        JSONResponse: JSON response containing the country production plot.
+    """
+    try:
+        plot = country_prod_plot("disney")
+        return JSONResponse(content=plot, media_type="application/json")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
 @disney_router.get("/unique", response_model=Dict[str, List])
 async def get_unique(db: Session = Depends(get_db)):
+    """Get unique years and ratings for Disney shows.
+
+    Args:
+        db (Session): SQLAlchemy session.
+
+    Returns:
+        Dict: Dictionary containing unique years and ratings.
+    """
     unique_years = (
         db.query(DisneyModel.release_year)
         .distinct()
@@ -24,8 +99,6 @@ async def get_unique(db: Session = Depends(get_db)):
         .all()
     )
 
-    # unique_actors = db.query(DisneyModel.cast).distinct().all()
-    # unique_directors = db.query(DisneyModel.director).distinct().all()
     unique_ratings = db.query(DisneyModel.rating).distinct().all()
 
     if not unique_years:
@@ -33,8 +106,6 @@ async def get_unique(db: Session = Depends(get_db)):
 
     return {
         "years": [year[0] for year in unique_years],
-        # "actors": [actor[0] for actor in unique_actors],
-        # "directors": [director[0] for director in unique_directors],
         "ratings": [rating[0] for rating in unique_ratings],
     }
 

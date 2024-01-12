@@ -23,6 +23,7 @@ class NetflixModel(Base):
     description = Column(String(500), nullable=True)
 
     def __repr__(self):
+        """Representation of the Model."""
         return f"<ShowData(show_id={self.show_id}, title={self.title}, type={self.type}, director={self.director}, cast={self.cast}, country={self.country}, date_added={self.date_added}, release_year={self.release_year}, rating={self.rating}, duration={self.duration}, listed_in={self.listed_in}, description={self.description})>"
 
 
@@ -46,6 +47,8 @@ class AmazonModel(Base):
     description = Column(String(500), nullable=True)
 
     def __repr__(self):
+        """Representation of the Model."""
+
         return f"<ShowData(show_id={self.show_id}, title={self.title}, type={self.type}, director={self.director}, cast={self.cast}, country={self.country}, date_added={self.date_added}, release_year={self.release_year}, rating={self.rating}, duration={self.duration}, listed_in={self.listed_in}, description={self.description})>"
 
 
@@ -69,4 +72,6 @@ class DisneyModel(Base):
     description = Column(String(500), nullable=True)
 
     def __repr__(self):
+        """Representation of the Model."""
+
         return f"<ShowData(show_id={self.show_id}, title={self.title}, type={self.type}, director={self.director}, cast={self.cast}, country={self.country}, date_added={self.date_added}, release_year={self.release_year}, rating={self.rating}, duration={self.duration}, listed_in={self.listed_in}, description={self.description})>"

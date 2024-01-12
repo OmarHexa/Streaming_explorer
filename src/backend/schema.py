@@ -5,6 +5,11 @@ from pydantic import BaseModel, validator
 
 # Define Pydantic model for the dataset
 class ShowSchema(BaseModel):
+    """Schema for all tables in the database.
+
+    Used for Pydantic validation
+    """
+
     show_id: str
     type: str
     title: str
