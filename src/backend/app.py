@@ -13,7 +13,6 @@ from src.backend.recommender import recommend_similar_shows
 from src.backend.routes.amazon import amazon_router
 from src.backend.routes.disney import disney_router
 from src.backend.routes.netflix import netflix_router
-from src.backend.schema import ShowSchema
 
 Base.metadata.create_all(bind=engine)
 # FastAPI setup

@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .src/backend
+    ports:
+      - "8000:8000"  # Adjust the port as needed
+    depends_on:
+      - db  # Assuming you have a database service (MySQL) that the backend depends on
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8501:8501"  # Adjust the port as needed
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+      MYSQL_DATABASE: example_db
+      MYSQL_USER: example_user
+      MYSQL_PASSWORD: example_password
