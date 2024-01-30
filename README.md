@@ -1,4 +1,4 @@
-# Byte by Byte ML
+# Streaming Explorer
 
 ## Datasets Used
 
