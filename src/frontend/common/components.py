@@ -177,7 +177,7 @@ class ShowEditorHandler:
             col3.button("Add Field :heavy_plus_sign:", on_click=increase_count)
 
         if col1.button(":blue[Submit]"):
-            # st.dataframe(ss.update_dict)
+            st.write(ss.update_dict)
             updated_show = request_with_error_handling(
                 self.url, f"{self.channel}/{show_id}", "put", data=ss.update_dict
             )
