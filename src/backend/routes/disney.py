@@ -11,7 +11,7 @@ rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=
 
 from src.backend.database.mysql.model import DisneyModel
 from src.backend.dependencies import get_db
-from src.backend.eda_func import (
+from src.backend.eda.eda_spark import (
     country_prod_plot,
     genres_plot,
     rating_plot,

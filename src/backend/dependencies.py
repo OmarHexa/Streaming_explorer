@@ -1,3 +1,4 @@
+from pyspark.sql import SparkSession
 from sqlalchemy.orm import Session
 
 from src.backend.database.mysql.config import SessionLocal
@@ -14,3 +15,11 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
+
+
+def get_spark() -> SparkSession:
+    spark = SparkSession.builder.appName("StreamingAnalysis").getOrCreate()
+    try:
+        yield spark
+    finally:
+        spark.stop()
