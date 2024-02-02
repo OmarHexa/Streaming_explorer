@@ -97,3 +97,25 @@ To initialize the database, we first need to preprocess the raw dataset download
 - Load the cleaned data into your mysql database.
 
 Remember to Download the datasets from kaggel and create a directory named `Data` and save the dataset inside the folder.
+
+## Run Docker for backend and frontend
+
+Build the docker image
+
+```
+docker build -t <image name> -f ./src/backend/Dockerfile .
+```
+
+Run the docker image. Here, we bind the host and docker containers port using host mode.
+
+```
+docker run --network=host --env-file .env <image name>`
+```
+
+## RUN docker compose
+
+docker compose will build both the docker file and run them togather.
+
+```
+docker-compose up
+```

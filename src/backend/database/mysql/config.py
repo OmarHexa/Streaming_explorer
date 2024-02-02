@@ -9,7 +9,12 @@ from sqlalchemy.orm import sessionmaker
 load_dotenv()
 
 # Get environment variables
-DATABASE_URL = os.getenv("DATABASE_URL")
+USER_NAME = os.getenv("USER_NAME")
+PASSWORD = os.getenv("PASSWORD")
+HOST = os.getenv("HOST", "127.0.0.1")
+
+
+DATABASE_URL = f"mysql+mysqlconnector://{USER_NAME}:{PASSWORD}@{HOST}:3306/streaming_explorer"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

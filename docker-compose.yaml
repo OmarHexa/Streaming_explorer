@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    volumes:
+      - ./src:/app/src
+      - ./requirements.txt:/app/requirements.txt
+      - ./pyproject.toml:/app/pyproject.toml
+    # ports:
+    #   - "8000:8000"
+    env_file:
+      - .env
+    network_mode: "host"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+    volumes:
+      - ./src:/app/src
+      - ./requirements.txt:/app/requirements.txt
+      - ./pyproject.toml:/app/pyproject.toml
+    # ports:
+    #   - "8501:8501"
+    network_mode: "host"
+    depends_on:
+      - backend
