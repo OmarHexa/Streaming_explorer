@@ -1,9 +1,14 @@
-FROM python:3.9
+FROM python:3.11
 
-COPY ./frontend /app
+# Copy the current directory contents into the container at /app
+COPY src /app/src
+COPY requirements.txt /app
+COPY pyproject.toml /app
 
+
+# Set the working directory in the container
 WORKDIR /app
+# install all the requirements
+RUN pip install -r requirements.txt
 
-RUN pip install -r requirements.txt  # Adjust based on your actual requirements
-
-CMD ["streamlit", "run", "home.py", "--server.port", "8501"]
+CMD ["streamlit", "run", "src/frontend/home.py", "--server.port", "8501"]
