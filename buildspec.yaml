@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY_URL
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - docker build -t $IMAGE_NAME -f src/backend/Dockerfile .
+
+  post_build:
+    commands:
+      - echo "Tagging Docker image..."
+      - docker tag $IMAGE_NAME:latest $ECR_REGISTRY_URL/$IMAGE_NAME:latest
+      - echo "Pushing Docker image to ECR..."
+      - docker push $ECR_REGISTRY_URL/$IMAGE_NAME:latest
+
+artifacts:
+  files: '**/*'
+  discard-paths: yes

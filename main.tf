@@ -1,45 +1,74 @@
+provider "aws" {
+  region = "eu-central-1"
+}
+
+resource "aws_instance" "fastapi_server" {
+  ami           = "ami-0123456789abcdef0"  # Specify the AMI ID for your desired Amazon Machine Image
+  instance_type = "t2.micro"               # Specify the instance type, e.g., t2.micro
+  key_name      = "fastapiserver_key"     # Specify the key pair name for SSH access
+  # subnet_id     = "subnet-0123456789abcdef0"  # Specify the subnet ID where the instance will be launched
+
+  tags = {
+    Name = "FastAPI Server"
+  }
+}
+
+resource "aws_instance" "streamlit_server" {
+  ami           = "ami-0123456789abcdef0"  # Specify the AMI ID for your desired Amazon Machine Image
+  instance_type = "t2.micro"               # Specify the instance type, e.g., t2.micro
+  key_name      = "streamlitserver_key"     # Specify the key pair name for SSH access
+  # subnet_id     = "subnet-0123456789abcdef0"  # Specify the subnet ID where the instance will be launched
+
+  tags = {
+    Name = "Streamlit Server"
+  }
+}
 
 provider "aws" {
-  region = "your_aws_region"
+  region = "eu-central-1"
 }
 
-resource "aws_ecr_repository" "backend" {
-  name = "backend-repository"
-}
-
-resource "aws_ecr_repository" "frontend" {
-  name = "frontend-repository"
-}
-
-# Use this data source to obtain the AWS ECR login command
-data "aws_ecr_authorization_token" "ecr_auth" {}
-
-# Build the backend Docker image and push it to AWS ECR
-resource "null_resource" "build_and_push_backend" {
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      eval $(${data.aws_ecr_authorization_token.ecr_auth.authorization_token})
-      docker build -t ${aws_ecr_repository.backend.repository_url}:latest ./backend
-      docker push ${aws_ecr_repository.backend.repository_url}:latest
-    EOT
+resource "aws_instance" "fastapi_server" {
+  ami           = "ami-0123456789abcdef0"  # Replace with the actual AMI ID
+  instance_type = "t2.micro"
+  key_name      = "your-key-pair-name"
+  subnet_id     = "subnet-0123456789abcdef0"
+  tags = {
+    Name = "FastAPI Server"
   }
 }
 
-# Build the frontend Docker image and push it to AWS ECR
-resource "null_resource" "build_and_push_frontend" {
-  triggers = {
-    always_run = "${timestamp()}"
+resource "aws_db_instance" "mysql_instance" {
+  identifier           = "my-mysql-db"
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "8.0.21"
+  instance_class       = "db.t2.micro"
+  username             = "db_user"
+  password             = "db_password"
+  parameter_group_name = "default.mysql8.0"
+  publicly_accessible  = false
+  multi_az             = false
+  skip_final_snapshot  = true
+
+  vpc_security_group_ids = [aws_security_group.mysql_sg.id]
+
+
+  tags = {
+    Name = "My MySQL Database"
+  }
+}
+
+resource "aws_security_group" "mysql_sg" {
+  name        = "mysql_sg"
+  description = "Security group for MySQL RDS instance"
+
+  ingress {
+    from_port = 3306
+    to_port   = 3306
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  provisioner "local-exec" {
-    command = <<-EOT
-      eval $(${data.aws_ecr_authorization_token.ecr_auth.authorization_token})
-      docker build -t ${aws_ecr_repository.frontend.repository_url}:latest ./frontend
-      docker push ${aws_ecr_repository.frontend.repository_url}:latest
-    EOT
-  }
 }
