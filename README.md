@@ -1,5 +1,7 @@
 # Byte by Byte ML
 
+![UI view](streamingEx.gif)
+
 ## Datasets Used
 
 1. [Netflix Movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
