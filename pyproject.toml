@@ -9,7 +9,7 @@ filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::UserWarning",
 ]
-log_cli = "True"
+# log_cli = "True"
 markers = [
   "slow: slow tests",
 ]

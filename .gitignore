@@ -20,3 +20,4 @@ Data/
 
 # Environments
 .env
+*venv

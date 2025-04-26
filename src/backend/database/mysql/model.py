@@ -8,7 +8,6 @@ class NetflixModel(Base):
 
     __tablename__ = "netflix"
 
-    # id = Column(Integer, autoincrement=True)
     show_id = Column(String(200), primary_key=True, nullable=False, unique=True)
     type = Column(String(200), nullable=False)
     title = Column(String(200), nullable=False)
@@ -32,7 +31,6 @@ class AmazonModel(Base):
 
     __tablename__ = "amazon"
 
-    # id = Column(Integer, autoincrement=True)
     show_id = Column(String(200), primary_key=True, nullable=False, unique=True)
     type = Column(String(200), nullable=False)
     title = Column(String(200), nullable=False)
