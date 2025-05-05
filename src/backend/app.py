@@ -3,15 +3,15 @@ from typing import Dict
 import rootutils
 from fastapi import FastAPI
 
+
+from backend.database.config import engine 
+from backend.database.model import Base 
+from src.backend.recommender import recommend_similar_shows
+from src.backend.routes.amazon import amazon_router 
+from src.backend.routes.disney import disney_router 
+from src.backend.routes.netflix import netflix_router 
+
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
-
-from backend.database.config import engine # noqa: E402
-from backend.database.model import Base # noqa: E402
-from src.backend.recommender import recommend_similar_shows # noqa: E402
-from src.backend.routes.amazon import amazon_router # noqa: E402
-from src.backend.routes.disney import disney_router  # noqa: E402
-from src.backend.routes.netflix import netflix_router  # noqa: E402
-
 Base.metadata.create_all(bind=engine)
 # FastAPI setup
 app = FastAPI()

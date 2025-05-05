@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 
 # Define Pydantic model for the dataset
