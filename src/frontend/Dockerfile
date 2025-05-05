@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 # Copy the current directory contents into the container at /app
 COPY src /app/src

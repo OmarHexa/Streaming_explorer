@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from src.backend.database.mysql.config import Base
+from backend.database.config import Base
 
 
 class NetflixModel(Base):
@@ -20,6 +20,7 @@ class NetflixModel(Base):
     duration = Column(String(200), nullable=True)
     listed_in = Column(String(200), nullable=True)
     description = Column(String(500), nullable=True)
+    extend_existing = True
 
     def __repr__(self):
         """Representation of the Model."""
@@ -43,6 +44,8 @@ class AmazonModel(Base):
     duration = Column(String(200), nullable=True)
     listed_in = Column(String(200), nullable=True)
     description = Column(String(500), nullable=True)
+    extend_existing = True
+
 
     def __repr__(self):
         """Representation of the Model."""
@@ -68,6 +71,8 @@ class DisneyModel(Base):
     duration = Column(String(200), nullable=True)
     listed_in = Column(String(200), nullable=True)
     description = Column(String(500), nullable=True)
+    extend_existing =True
+
 
     def __repr__(self):
         """Representation of the Model."""

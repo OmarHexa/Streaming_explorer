@@ -1,16 +1,15 @@
 import rootutils
 
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 
 import streamlit as st
 
 from src.frontend.common.components import get_show_recommendations
 
+rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 st.set_page_config(
     page_title="Home",
     page_icon="🎥",
 )
-#    menu_items={"About": "something"})
 
 # FastAPI backend URL
 FASTAPI_URL = "http://127.0.0.1:8000"

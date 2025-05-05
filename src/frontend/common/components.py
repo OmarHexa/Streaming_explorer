@@ -1,9 +1,8 @@
 import json
-from typing import Dict, List
+from typing import List
 
 import streamlit as st
 
-from src.backend.schema import ShowSchema
 from src.frontend.common.utils import request_with_error_handling
 
 # Alias for session state

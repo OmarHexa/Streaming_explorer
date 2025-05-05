@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 
-from src.backend.database.mysql.config import engine
+from backend.database.config import engine
 
 
 def yearly_show_plot(service: str = "netflix"):

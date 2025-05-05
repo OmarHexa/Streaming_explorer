@@ -7,9 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
-
-from src.backend.database.mysql.model import DisneyModel
+from backend.database.model import DisneyModel
 from src.backend.dependencies import get_db
 from src.backend.eda.eda_pandas import (
     country_prod_plot,
@@ -18,6 +16,8 @@ from src.backend.eda.eda_pandas import (
     yearly_show_plot,
 )
 from src.backend.schema import ShowSchema
+rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
+
 
 disney_router = APIRouter(prefix="/disney", tags=["Disney+"])
 

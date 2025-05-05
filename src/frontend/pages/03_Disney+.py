@@ -1,21 +1,18 @@
-import pandas as pd
 import rootutils
 import streamlit as st
 
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 from src.backend.schema import ShowSchema
 from src.frontend.common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,
 )
+rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 
 st.set_page_config(
     page_title="Disney+",
     page_icon="🏰",
 )
-# FastAPI backend URL
-FASTAPI_URL = "http://127.0.0.1:8000"
 # This removes the default menu button on the top right of the screen
 st.markdown("<style>#MainMenu{visibility:hidden;}</style>", unsafe_allow_html=True)
 

@@ -1,14 +1,15 @@
 # from pyspark.sql import SparkSession
+from typing import Iterator
 from sqlalchemy.orm import Session
 
-from src.backend.database.mysql.config import SessionLocal
+from backend.database.config import SessionLocal
 
 # Dependency for getting a database session
 # see the following link to more about dependencies with yield
 # https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/
 
 
-def get_db() -> Session:
+def get_db() -> Iterator[Session]:
     """Yields a SQL database session for the api to query with SQLAlchemy."""
     db = SessionLocal()
     try:
@@ -16,10 +17,3 @@ def get_db() -> Session:
     finally:
         db.close()
 
-
-# def get_spark() -> SparkSession:
-#     spark = SparkSession.builder.appName("StreamingAnalysis").getOrCreate()
-#     try:
-#         yield spark
-#     finally:
-#         spark.stop()

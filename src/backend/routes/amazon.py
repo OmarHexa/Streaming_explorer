@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
-from src.backend.database.mysql.model import AmazonModel
+from backend.database.model import AmazonModel
 from src.backend.dependencies import get_db
 from src.backend.eda.eda_pandas import (
     country_prod_plot,

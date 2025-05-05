@@ -1,19 +1,16 @@
-from typing import Dict, List
+from typing import Dict
 
 import rootutils
-from fastapi import Body, Depends, FastAPI, HTTPException, Query, status
-from fastapi.routing import Annotated
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 
-from src.backend.database.mysql.config import engine
-from src.backend.database.mysql.model import Base
-from src.backend.recommender import recommend_similar_shows
-from src.backend.routes.amazon import amazon_router
-from src.backend.routes.disney import disney_router
-from src.backend.routes.netflix import netflix_router
-from src.backend.schema import ShowSchema
+from backend.database.config import engine # noqa: E402
+from backend.database.model import Base # noqa: E402
+from src.backend.recommender import recommend_similar_shows # noqa: E402
+from src.backend.routes.amazon import amazon_router # noqa: E402
+from src.backend.routes.disney import disney_router  # noqa: E402
+from src.backend.routes.netflix import netflix_router  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 # FastAPI setup
