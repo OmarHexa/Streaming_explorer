@@ -1,15 +1,13 @@
-import rootutils
 import streamlit as st
 from dotenv import load_dotenv
 import os
-from src.frontend.common.utils import ShowSchema
+from ..common.utils import ShowSchema
 
-from src.frontend.common.components import (
+from ..common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,
 )
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 load_dotenv()
 BACKEND_URL = os.getenv("BACKEND_URL")
 st.set_page_config(

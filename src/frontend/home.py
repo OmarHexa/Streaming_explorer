@@ -1,10 +1,8 @@
 import os
-import rootutils
 from dotenv import load_dotenv
 import streamlit as st
-from src.frontend.common.components import get_show_recommendations
+from common.components import get_show_recommendations
 
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 st.set_page_config(
     page_title="Home",
     page_icon="🎥",

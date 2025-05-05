@@ -3,7 +3,7 @@ from typing import List
 
 import streamlit as st
 
-from src.frontend.common.utils import request_with_error_handling
+from .utils import request_with_error_handling
 
 # Alias for session state
 ss = st.session_state

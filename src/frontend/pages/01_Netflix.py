@@ -1,17 +1,15 @@
 from dotenv import load_dotenv
 import os
 
-import rootutils
 import streamlit as st
 
 
-from src.frontend.common.components import (
+from ..common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,
 )
-from src.frontend.common.utils import ShowSchema
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
+from ..common.utils import ShowSchema
 
 
 
