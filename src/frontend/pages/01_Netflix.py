@@ -2,13 +2,19 @@
 import rootutils
 import streamlit as st
 
-from src.backend.schema import ShowSchema
+
 from src.frontend.common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,
 )
+from src.frontend.common.utils import ShowSchema
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
+
+
+
+# Define Pydantic model for the dataset
+
 
 # This removes the default menu button on the top right of the screen
 st.markdown("<style>#MainMenu{visibility:hidden;}</style>", unsafe_allow_html=True)

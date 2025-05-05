@@ -1,7 +1,8 @@
 import rootutils
 import streamlit as st
 
-from src.backend.schema import ShowSchema
+from src.frontend.common.utils import ShowSchema
+
 from src.frontend.common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,

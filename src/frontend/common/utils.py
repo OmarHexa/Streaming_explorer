@@ -1,5 +1,8 @@
-from typing import Dict, List
+from typing import Dict
 
+from typing import Optional
+
+from pydantic import BaseModel
 import requests
 import streamlit as st
 
@@ -33,3 +36,23 @@ def request_with_error_handling(
         st.error("The request timed out. Please try again.")
     except requests.exceptions.RequestException as e:
         st.error(f"An error occurred: {e}")
+
+
+class ShowSchema(BaseModel):
+    """Schema for all tables in the database.
+
+    Used for Pydantic validation
+    """
+
+    show_id: str
+    type: str
+    title: str
+    director: Optional[str] = None
+    cast: Optional[str] = None
+    country: Optional[str] = None
+    date_added: Optional[str] = None
+    release_year: Optional[int] = None
+    rating: Optional[str] = None
+    duration: Optional[str] = None
+    listed_in: Optional[str] = None
+    description: Optional[str] = None
