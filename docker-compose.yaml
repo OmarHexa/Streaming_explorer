@@ -3,25 +3,17 @@ name: streaming-explorer
 services:
   backend:
     build:
-      context: .
+      context: ./src/backend
       dockerfile: src/backend/Dockerfile
-    volumes:
-      - ./src:/app/src
-      - ./requirements.txt:/app/requirements.txt
-      - ./pyproject.toml:/app/pyproject.toml
     env_file:
       - .env
 
   frontend:
     build:
-      context: .
+      context: ./src/frontend
       dockerfile: src/frontend/Dockerfile
-    volumes:
-      - ./src:/app/src
-      - ./requirements.txt:/app/requirements.txt
-      - ./pyproject.toml:/app/pyproject.toml
-    # ports:
-    #   - "8501:8501"
+    ports:
+      - "8501:8501"
     depends_on:
       - backend
 

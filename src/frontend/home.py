@@ -1,8 +1,7 @@
+import os
 import rootutils
-
-
+from dotenv import load_dotenv
 import streamlit as st
-
 from src.frontend.common.components import get_show_recommendations
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
@@ -10,9 +9,9 @@ st.set_page_config(
     page_title="Home",
     page_icon="🎥",
 )
+load_dotenv()
 
-# FastAPI backend URL
-FASTAPI_URL = "http://127.0.0.1:8000"
+BACKEND_URL = os.getenv("BACKEND_URL")
 # This removes the default menu button on the top right of the screen
 st.markdown("<style>#MainMenu{visibility:hidden;}</style>", unsafe_allow_html=True)
 A, B, C = st.columns((1, 2, 1))
@@ -30,4 +29,4 @@ st.write(
 st.markdown(":blue[Get Show recommendation from all platform]")
 
 
-get_show_recommendations(FASTAPI_URL)
+get_show_recommendations(BACKEND_URL)

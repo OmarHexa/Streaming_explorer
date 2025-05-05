@@ -1,6 +1,7 @@
 import rootutils
 import streamlit as st
-
+from dotenv import load_dotenv
+import os
 from src.frontend.common.utils import ShowSchema
 
 from src.frontend.common.components import (
@@ -8,6 +9,8 @@ from src.frontend.common.components import (
     ShowEditorHandler,
     ShowsViewHandler,
 )
+load_dotenv()
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 st.set_page_config(
@@ -26,15 +29,15 @@ st.title(
 shows_container = st.container()
 
 # Display shows
-shows_viewer = ShowsViewHandler(container=shows_container, channel="amazon")
+shows_viewer = ShowsViewHandler(container=shows_container,fastapi_url=BACKEND_URL, channel="amazon")
 options = list(ShowSchema.__annotations__.keys())
-show_editor = ShowEditorHandler(options, channel="amazon")
+show_editor = ShowEditorHandler(options,url=BACKEND_URL, channel="amazon")
 shows_viewer.render_shows()
 # # Display buttons for Create Show and Edit Show
 show_editor.create_show()
 show_editor.edit_show()
 
-plot_object = PlotlyPlotDisplayer("amazon")
+plot_object = PlotlyPlotDisplayer("amazon",url=BACKEND_URL)
 
 plot_object.display_plot("yearlyShowPlot")
 plot_object.display_plot("ratingPlot")
