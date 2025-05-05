@@ -4,18 +4,25 @@ services:
   backend:
     build:
       context: ./src/backend
-      dockerfile: src/backend/Dockerfile
+      dockerfile: ./Dockerfile
     env_file:
       - .env
+    networks:
+      - private
 
   frontend:
     build:
       context: ./src/frontend
-      dockerfile: src/frontend/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - "8501:8501"
     depends_on:
       - backend
+    networks:
+      - public
+      - private
+    environment:
+      - BACKEND_URL=http://backend:8000
 
   database:
     image: postgres:latest
@@ -50,11 +57,9 @@ networks:
     name: private
     driver: bridge
     attachable: false
-    enable_ipv6: false
-    internal: false
+    internal: true
   public:
     name: public
     driver: bridge
     attachable: false
-    enable_ipv6: false
     internal: false
