@@ -2,7 +2,7 @@
 from typing import Iterator
 from sqlalchemy.orm import Session
 
-from backend.database.config import SessionLocal
+from database.config import SessionLocal
 
 # Dependency for getting a database session
 # see the following link to more about dependencies with yield

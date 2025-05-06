@@ -1,9 +1,9 @@
 import streamlit as st
 from dotenv import load_dotenv
 import os
-from ..common.utils import ShowSchema
+from common.utils import ShowSchema
 
-from ..common.components import (
+from common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,

@@ -4,12 +4,12 @@ import os
 import streamlit as st
 
 
-from ..common.components import (
+from common.components import (
     PlotlyPlotDisplayer,
     ShowEditorHandler,
     ShowsViewHandler,
 )
-from ..common.utils import ShowSchema
+from common.utils import ShowSchema
 
 
 

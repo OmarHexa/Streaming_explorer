@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from backend.database.config import Base
+from .config import Base
 
 
 class NetflixModel(Base):

@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from backend.database.config import engine
+from database.config import engine
 
 
 def recommend_similar_shows(input_title, top_n=3, platforms=("amazon", "disney", "netflix")):

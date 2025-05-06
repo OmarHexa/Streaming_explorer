@@ -4,12 +4,12 @@ import rootutils
 from fastapi import FastAPI
 
 
-from backend.database.config import engine 
-from backend.database.model import Base 
-from src.backend.recommender import recommend_similar_shows
-from src.backend.routes.amazon import amazon_router 
-from src.backend.routes.disney import disney_router 
-from src.backend.routes.netflix import netflix_router 
+from database.config import engine 
+from database.model import Base 
+from recommender import recommend_similar_shows
+from routes.amazon import amazon_router 
+from routes.disney import disney_router 
+from routes.netflix import netflix_router 
 
 rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 Base.metadata.create_all(bind=engine)

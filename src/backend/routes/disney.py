@@ -1,22 +1,20 @@
 from typing import Dict, List
 
-import rootutils
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.routing import Annotated
 from sqlalchemy.orm import Session
 
-from backend.database.model import DisneyModel
-from src.backend.dependencies import get_db
-from src.backend.eda.eda_pandas import (
+from database.model import DisneyModel
+from .dependencies import get_db
+from eda.eda_pandas import (
     country_prod_plot,
     genres_plot,
     rating_plot,
     yearly_show_plot,
 )
-from src.backend.schema import ShowSchema
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
+from schema import ShowSchema
 
 
 disney_router = APIRouter(prefix="/disney", tags=["Disney+"])
