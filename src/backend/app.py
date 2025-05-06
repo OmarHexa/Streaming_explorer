@@ -1,6 +1,5 @@
 from typing import Dict
 
-import rootutils
 from fastapi import FastAPI
 
 
@@ -11,7 +10,6 @@ from routes.amazon import amazon_router
 from routes.disney import disney_router 
 from routes.netflix import netflix_router 
 
-rootutils.setup_root(__file__, indicator="pyproject.toml", pythonpath=True, cwd=True)
 Base.metadata.create_all(bind=engine)
 # FastAPI setup
 app = FastAPI()

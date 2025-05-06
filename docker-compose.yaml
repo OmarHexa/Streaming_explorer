@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: ./src/backend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
     networks:
@@ -13,7 +13,7 @@ services:
   frontend:
     build:
       context: ./src/frontend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8501:8501"
     depends_on:
@@ -31,7 +31,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     env_file:
-      - ./.env
+      - .env
     restart: always
     networks:
       - private
@@ -48,18 +48,10 @@ services:
 # docker managed volumes
 volumes:
   db_data:
-    name: db_data
-    driver: local
-    external: false
 
 networks:
   private:
-    name: private
     driver: bridge
-    attachable: false
     internal: true
   public:
-    name: public
     driver: bridge
-    attachable: false
-    internal: false
