@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir poetry \
     && poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi
 
-CMD ["streamlit", "run", "home.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "home.py", "--server.port=8501"]

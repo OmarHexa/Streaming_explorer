@@ -5,10 +5,12 @@ services:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
     networks:
       - private
+    depends_on:
+      - database
 
   frontend:
     build:

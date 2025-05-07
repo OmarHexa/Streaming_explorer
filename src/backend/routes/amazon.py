@@ -96,9 +96,6 @@ def get_unique(db: Session = Depends(get_db)):
         .order_by(AmazonModel.release_year.desc())
         .all()
     )
-
-    # unique_actors = db.query(AmazonModel.cast).distinct().all()
-    # unique_directors = db.query(AmazonModel.director).distinct().all()
     unique_ratings = db.query(AmazonModel.rating).distinct().all()
 
     if not unique_years:
@@ -106,8 +103,6 @@ def get_unique(db: Session = Depends(get_db)):
 
     return {
         "years": [year[0] for year in unique_years],
-        # "actors": [actor[0] for actor in unique_actors],
-        # "directors": [director[0] for director in unique_directors],
         "ratings": [rating[0] for rating in unique_ratings],
     }
 
