@@ -8,9 +8,12 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
     networks:
+      - public
       - private
     depends_on:
-      - database
+      - database_init
+    ports:
+      - "8000:8000"
 
   frontend:
     build:
@@ -46,6 +49,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  database_init:
+    build:
+      context: ./src/init
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+    networks:
+      - public
+      - private
+    depends_on:
+      database:
+        condition: service_healthy
+
 
 # docker managed volumes
 volumes:
