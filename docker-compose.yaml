@@ -1,6 +1,20 @@
 name: streaming-explorer
 
 services:
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - public
+    depends_on:
+      - backend
+      - frontend
+
+      
   backend:
     build:
       context: ./src/backend
@@ -12,8 +26,6 @@ services:
       - private
     depends_on:
       - database_init
-    ports:
-      - "8000:8000"
 
   frontend:
     build:
