@@ -21,3 +21,6 @@ Data/
 # Environments
 .env
 *venv
+*.crt
+*.key
+
