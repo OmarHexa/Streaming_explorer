@@ -5,14 +5,14 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "443:443"
-      - "80:80"
+      - "443:443" # HTTPS
+      - "80:80" # HTTP
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/certificate:/etc/cert
     networks:
-      - public
-      - private
+      - public # nginx needs to be accessible from the internet
+      - private # nginx needs to access the backend and frontend
     depends_on:
       - backend
       - frontend
@@ -38,7 +38,6 @@ services:
     depends_on:
       - backend
     networks:
-      - public
       - private
     environment:
       - BACKEND_URL=http://backend:8000
@@ -70,8 +69,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
     networks:
-      - public
-      - private
+      - public #need access to the internet to download the data
+      - private #need access to the database
     depends_on:
       database:
         condition: service_healthy
