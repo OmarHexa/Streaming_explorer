@@ -1,25 +1,32 @@
 version: 0.2
 
-phases:
-  install:
-    runtime-versions:
-      docker: 19
-  pre_build:
-    commands:
-      - echo "Would execute: Logging in to Amazon ECR..."
-      - echo "Would execute: aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY_URL"
-  build:
-    commands:
-      - echo "Would execute: Building Docker image..."
-      - echo "Would execute: docker build -t $IMAGE_NAME -f src/backend/Dockerfile ."
+env:
+    variables:
+        MY_AWS_REGION: "eu-north-1"
 
-  post_build:
-    commands:
-      - echo "Would execute: Tagging Docker image..."
-      - echo "Would execute: docker tag $IMAGE_NAME:latest $ECR_REGISTRY_URL/$IMAGE_NAME:latest"
-      - echo "Would execute: Pushing Docker image to ECR..."
-      - echo "Would execute: docker push $ECR_REGISTRY_URL/$IMAGE_NAME:latest"
 
-artifacts:
-  files: '**/*'
-  discard-paths: yes
+phases: 
+    install:
+        runtime-versions:
+            nodejs: 12
+        commands:
+            - echo "Running on $MY_AWS_REGION"
+            - echo "Print Environment Variables"
+            - echo "Start the installation process"
+            - echo "Installation Process Completed"
+    pre_build:
+        commands: 
+            - echo "This is the start of Pre-Build phase"
+            - echo "Pre-Build phase is now completed"
+    build:
+        commands:
+            - echo "we are currently on build phase"
+            - echo "Build Activity is completed"
+            - echo "Run Basic check whether Website is ready for use"
+            - grep -Fq "AWS Certified DevOps Engineer" index.html
+            - echo "Test was successful"
+            - echo "proceed with next steps"
+    post_build:
+        commands:
+            - echo "We are currently on post_build phase"
+            - echo "post_build phase activity is completed. Moving to Artifacts Phase"
