@@ -122,7 +122,7 @@ resource "aws_codebuild_project" "app_codebuild_project" {
   # Logs configuration (where build logs go)
   logs_config {
     cloudwatch_logs {
-      group_name  = "/aws/codebuild/${var.project_name}-project"
+      group_name  = "/aws/codebuild/${var.project_name}"
       stream_name = "build-log-stream"
       status      = "ENABLED"
     }
