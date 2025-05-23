@@ -13,7 +13,7 @@ variable "project_name" {
 }
 
 variable "github_repo_url" {
-  description = "The HTTPS URL of your GitHub repository (e.g., https://github.com/your-org/your-repo.git)."
+  description = "The HTTPS URL of your GitHub repository"
   type        = string
   # IMPORTANT: Replace with your actual GitHub repository URL
   default     = "https://github.com/OmarHexa/Streaming_explorer.git"
