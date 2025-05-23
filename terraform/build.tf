@@ -157,6 +157,11 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         ]
       },
       {
+            "Action": "ecr:GetAuthorizationToken",
+            "Effect": "Allow",
+            "Resource": "*" // <--- This is for GetAuthorizationToken
+        },
+      {
         Effect = "Allow",
         Resource = [
           aws_ecr_repository.backend_ecr_repo.arn, # NEW
