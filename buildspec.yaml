@@ -1,32 +1,44 @@
 version: 0.2
 
+# These are passed from the CodeBuild project configuration in Terraform.
 env:
-    variables:
-        MY_AWS_REGION: "eu-north-1"
+  variables:
+    AWS_ACCOUNT_ID: "$AWS_ACCOUNT_ID"       # Injected from CodeBuild project env
+    AWS_DEFAULT_REGION: "$AWS_DEFAULT_REGION" # Injected from CodeBuild project env
+    BACKEND_ECR_REPOSITORY_URI: "$BACKEND_ECR_REPOSITORY_URI" # Injected from CodeBuild project env
+    FRONTEND_ECR_REPOSITORY_URI: "$FRONTEND_ECR_REPOSITORY_URI" # Injected from CodeBuild project env
+    IMAGE_TAG: "latest" # Or use $CODEBUILD_RESOLVED_SOURCE_VERSION for a commit-specific tag
 
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      # Use the AWS CLI to get an authentication token and log in to ECR.
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
-phases: 
-    install:
-        runtime-versions:
-            nodejs: 12
-        commands:
-            - echo "Running on $MY_AWS_REGION"
-            - echo "Print Environment Variables"
-            - echo "Start the installation process"
-            - echo "Installation Process Completed"
-    pre_build:
-        commands: 
-            - echo "This is the start of Pre-Build phase"
-            - echo "Pre-Build phase is now completed"
-    build:
-        commands:
-            - echo "we are currently on build phase"
-            - echo "Build Activity is completed"
-            - echo "Run Basic check whether Website is ready for use"
-            - grep -Fq "AWS Certified DevOps Engineer" index.html
-            - echo "Test was successful"
-            - echo "proceed with next steps"
-    post_build:
-        commands:
-            - echo "We are currently on post_build phase"
-            - echo "post_build phase activity is completed. Moving to Artifacts Phase"
+  build:
+    commands:
+      # --- Build Backend Image ---
+      - echo "Building the backend Docker image from ./src/backend..."
+      # Use the context and Dockerfile path specified in docker-compose.yaml
+      - docker build -t $BACKEND_ECR_REPOSITORY_URI:$IMAGE_TAG -f ./src/backend/Dockerfile ./src/backend
+
+      # --- Build Frontend Image ---
+      - echo "Building the frontend Docker image from ./src/frontend..."
+      # Use the context and Dockerfile path specified in docker-compose.yaml
+      - docker build -t $FRONTEND_ECR_REPOSITORY_URI:$IMAGE_TAG -f ./src/frontend/Dockerfile ./src/frontend
+
+  post_build:
+    commands:
+      # --- Push Backend Image to ECR ---
+      - echo "Pushing the backend Docker image to ECR..."
+      - docker push $BACKEND_ECR_REPOSITORY_URI:$IMAGE_TAG
+
+      # --- Push Frontend Image to ECR ---
+      - echo "Pushing the frontend Docker image to ECR..."
+      - docker push $FRONTEND_ECR_REPOSITORY_URI:$IMAGE_TAG
+
+      - echo "Build and push of backend and frontend images completed successfully!"
+
+artifacts:
+  files: []

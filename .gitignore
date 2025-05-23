@@ -24,4 +24,4 @@ Data/
 *.crt
 *.key
 
-.terraform/**/*
+/terraform/.terraform/**/*

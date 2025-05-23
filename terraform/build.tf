@@ -10,22 +10,35 @@ resource "aws_cloudwatch_log_group" "codebuild_logs" {
 }
 
 
-# --- AWS ECR Repository ---
-# This is where your Docker images will be stored.
-resource "aws_ecr_repository" "app_ecr_repo" {
-  name                 = var.ecr_repo_name
-  image_tag_mutability = "MUTABLE" # Allows overwriting tags (e.g., 'latest')
+# --- AWS ECR Repository for Backend ---
+resource "aws_ecr_repository" "backend_ecr_repo" {
+  name                 = "${var.ecr_repo_prefix}-backend-repo" # Example: my-docker-app-backend-repo
+  image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
-    scan_on_push = true # Automatically scan images for vulnerabilities upon push
+    scan_on_push = true
   }
 
   tags = {
-    Name        = "${var.project_name}-ecr-repo"
+    Name        = "${var.project_name}-backend-ecr-repo"
     Environment = "Dev"
   }
 }
 
+# --- AWS ECR Repository for Frontend ---
+resource "aws_ecr_repository" "frontend_ecr_repo" {
+  name                 = "${var.ecr_repo_prefix}-frontend-repo" # Example: my-docker-app-frontend-repo
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Name        = "${var.project_name}-frontend-ecr-repo"
+    Environment = "Dev"
+  }
+}
 # --- IAM Role for CodeBuild ---
 # CodeBuild needs an IAM role to perform actions like reading from S3,
 # pushing to ECR, and writing logs to CloudWatch.
@@ -93,8 +106,12 @@ resource "aws_codebuild_project" "app_codebuild_project" {
       value = var.aws_region
     }
     environment_variable {
-      name  = "ECR_REPOSITORY_URI"
-      value = aws_ecr_repository.app_ecr_repo.repository_url
+      name  = "BACKEND_ECR_REPOSITORY_URI"
+      value = aws_ecr_repository.backend_ecr_repo.repository_url
+    }
+    environment_variable {
+      name  = "FRONTEND_ECR_REPOSITORY_URI"
+      value = aws_ecr_repository.frontend_ecr_repo.repository_url
     }
     environment_variable {
       name  = "IMAGE_TAG"
@@ -141,7 +158,11 @@ resource "aws_iam_role_policy" "codebuild_policy" {
       },
       {
         Effect = "Allow",
-        Resource = "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repo_name}",
+        Resource = [
+          aws_ecr_repository.backend_ecr_repo.arn, # NEW
+          aws_ecr_repository.frontend_ecr_repo.arn  # NEW
+          # If you had the original ecr_repo, remove or update it if you are consolidating
+        ]
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
