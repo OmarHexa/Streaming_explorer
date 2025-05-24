@@ -1,9 +1,33 @@
-## TODO
+# Streaming Explorer
 
-1. Create a INIT service that downloads data from kaggle and stores it in a database as soon as the database is created
-2. Make backend and frontend standalone packages
-3. Create a docker-compose file for the project
+![UI view](streamingEx.gif)
 
-4. Add Nginx to the project
-5. Add a CI/CD pipeline with Github Actions
-6. Add OpenTelemetry to the project
+## Datasets Used
+
+1. [Netflix Movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
+2. [Amazon Prime Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/amazon-prime-movies-and-tv-shows)
+3. [Disney+ Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/disney-movies-and-tv-shows)
+
+
+
+## Run Docker for backend and frontend
+
+Build the docker image
+
+```
+docker build -t <image name> -f ./src/backend/Dockerfile .
+```
+
+Run the docker image. Here, we bind the host and docker containers port using host mode.
+
+```
+docker run --network=host --env-file .env <image name>`
+```
+
+## RUN docker compose
+
+docker compose will build both the docker file and run them togather.
+
+```
+docker-compose up
+```
