@@ -11,3 +11,7 @@ terraform {
 provider "aws" {
   region = var.aws_region
 }
+
+# --- Data Source for AWS Caller Identity ---
+# Used to get the AWS account ID for constructing ARNs.
+data "aws_caller_identity" "current" {}

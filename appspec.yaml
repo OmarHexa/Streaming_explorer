@@ -1,0 +1,41 @@
+# appspec.yaml
+version: 0.0
+os: linux # Specify the operating system of the target EC2 instance
+files:
+  - source: / # The root of the deployment package (your .zip file from CodeBuild)
+    destination: /home/ec2-user/streaming-explorer # The directory on the EC2 instance where files will be copied
+
+permissions:
+  - object: /home/ec2-user/streaming-explorer # Apply permissions to the deployment directory
+    pattern: "**" # Apply to all files and subdirectories
+    owner: ec2-user # Set owner to the ec2-user
+    group: ec2-user # Set group to the ec2-user
+
+hooks:
+  # This hook runs before the application revision is installed.
+  # Use it to stop existing services and clean up previous deployments.
+  BeforeInstall:
+    - location: scripts/stop_and_clean.sh
+      timeout: 300 # Max 5 minutes for the script to run
+      runas: ec2-user # Run the script as the ec2-user
+
+  # This hook runs after the application revision is installed (files are copied).
+  # Use it to perform any setup tasks like copying environment files or certificates.
+  AfterInstall:
+    - location: scripts/copy_env_and_certs.sh
+      timeout: 300
+      runas: ec2-user
+
+  # This hook runs after the new application revision is installed and configured.
+  # Use it to start your application services (e.g., docker-compose up).
+  ApplicationStart:
+    - location: scripts/start_application.sh
+      timeout: 600 # Give more time for Docker images to pull and containers to start
+      runas: ec2-user
+
+  # This hook runs after the application has started.
+  # Use it to perform health checks to ensure the application is running correctly.
+  ValidateService:
+    - location: scripts/validate_service.sh
+      timeout: 300
+      runas: ec2-user

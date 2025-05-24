@@ -23,3 +23,10 @@ variable "ecr_repo_prefix" {
   type        = string
   default     = "streaming-explorer"
 }
+
+variable "code_deploy_bucket_name" {
+  description = "The name of the S3 bucket for CodeDeploy artifacts"
+  type        = string
+  default     = "streaming-explorer-codedeploy-artifacts"
+  
+}

@@ -1,77 +1,11 @@
 
-
-# --- Data Source for AWS Caller Identity ---
-# Used to get the AWS account ID for constructing ARNs.
-data "aws_caller_identity" "current" {}
-
-# --- CloudWatch Log Group (optional but safer to declare) ---
-resource "aws_cloudwatch_log_group" "codebuild_logs" {
-  name = "/aws/codebuild/${var.project_name}-project"
-}
-
-
-# --- AWS ECR Repository for Backend ---
-resource "aws_ecr_repository" "backend_ecr_repo" {
-  name                 = "${var.ecr_repo_prefix}-backend-repo" # Example: my-docker-app-backend-repo
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  tags = {
-    Name        = "${var.project_name}-backend-ecr-repo"
-    Environment = "Dev"
-  }
-}
-
-# --- AWS ECR Repository for Frontend ---
-resource "aws_ecr_repository" "frontend_ecr_repo" {
-  name                 = "${var.ecr_repo_prefix}-frontend-repo" # Example: my-docker-app-frontend-repo
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  tags = {
-    Name        = "${var.project_name}-frontend-ecr-repo"
-    Environment = "Dev"
-  }
-}
-# --- IAM Role for CodeBuild ---
-# CodeBuild needs an IAM role to perform actions like reading from S3,
-# pushing to ECR, and writing logs to CloudWatch.
-resource "aws_iam_role" "codebuild_role" {
-  name = "${var.project_name}-codebuild-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "codebuild.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-
-  tags = {
-    Name        = "${var.project_name}-codebuild-role"
-    Environment = "Dev"
-  }
-}
-
-
 # --- AWS CodeBuild Project ---
 # This is the core resource that defines your build process.
 resource "aws_codebuild_project" "app_codebuild_project" {
   name          = "${var.project_name}-project"
   description   = "CodeBuild project to build and push Docker image to ECR"
   service_role  = aws_iam_role.codebuild_role.arn
-  build_timeout = "15" # Build timeout in minutes
+  build_timeout = "10" # Build timeout in minutes
 
   # Source configuration (GitHub)
   source {
@@ -134,6 +68,31 @@ resource "aws_codebuild_project" "app_codebuild_project" {
   }
 }
 
+# --- IAM Role for CodeBuild ---
+# CodeBuild needs an IAM role to perform actions like reading from S3,
+# pushing to ECR, and writing logs to CloudWatch.
+resource "aws_iam_role" "codebuild_role" {
+  name = "${var.project_name}-codebuild-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "codebuild.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project_name}-codebuild-role"
+    Environment = "Dev"
+  }
+}
+
 
 
 # --- IAM Policy for CodeBuild Role ---
@@ -157,17 +116,8 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         ]
       },
       {
-            "Action": "ecr:GetAuthorizationToken",
-            "Effect": "Allow",
-            "Resource": "*" // <--- This is for GetAuthorizationToken
-        },
-      {
         Effect = "Allow",
-        Resource = [
-          aws_ecr_repository.backend_ecr_repo.arn, # NEW
-          aws_ecr_repository.frontend_ecr_repo.arn  # NEW
-          # If you had the original ecr_repo, remove or update it if you are consolidating
-        ]
+        Resource = "*",
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
@@ -200,13 +150,11 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         Resource = "arn:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.current.account_id}:report-group/${var.project_name}-*"
       },
       {
-        Sid: "SecretsManagerAccess",
         Effect = "Allow",
         Action = "secretsmanager:GetSecretValue",
         Resource = "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:github_token-*"
       },
       {
-        Sid: "GitHubAccess",
         Effect = "Allow",
         Action = [
           "codestar:*",

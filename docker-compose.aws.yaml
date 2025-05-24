@@ -1,0 +1,82 @@
+name: streaming-explorer
+
+
+services:
+  nginx:
+  image: nginx:latest
+  ports:
+    - "443:443" # HTTPS
+    - "80:80" # HTTP
+  volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/certificate:/etc/cert
+  networks:
+    - public # nginx needs to be accessible from the internet
+    - private # nginx needs to access the backend and frontend
+  depends_on:
+    - backend
+    - frontend
+    # ...
+  backend:
+    image: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_DEFAULT_REGION>.amazonaws.com/streaming-explorer-backend-repo:latest # Use actual ECR URI and tag
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+    networks:
+      - private
+    depends_on:
+      - database_init
+    # ...
+  frontend:
+    image: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_DEFAULT_REGION>.amazonaws.com/streaming-explorer-frontend-repo:latest # Use actual ECR URI and tag
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - private
+    environment:
+      - BACKEND_URL=http://backend:8000
+
+  database:
+    image: postgres:latest # Pulled from Docker Hub
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - private
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  database_init:
+    build:
+      context: ./src/init
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+    networks:
+      - public #need access to the internet to download the data
+      - private #need access to the database
+    depends_on:
+      database:
+        condition: service_healthy
+
+
+# docker managed volumes
+volumes:
+  db_data:
+
+networks:
+  private:
+    driver: bridge
+    internal: true
+  public:
+    driver: bridge
