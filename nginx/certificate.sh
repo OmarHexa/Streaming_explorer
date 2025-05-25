@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create directory for certificates
-CERT_DIR="./certificate"
+CERT_DIR="nginx/certificate"
 mkdir -p "$CERT_DIR"
 
 # File paths
