@@ -20,7 +20,12 @@ resource "aws_codebuild_project" "app_codebuild_project" {
 
   # Artifacts configuration (where build output goes)
   artifacts {
-    type = "NO_ARTIFACTS" # We are pushing to ECR, so no artifacts are needed in S3 for the build output.
+    type = "S3"
+    location = aws_s3_bucket.codedeploy_artifacts_bucket.id
+    name = "${var.project_name}-build"
+    packaging = "ZIP"
+    namespace_type = "BUILD_ID"
+    path = "artifacts"
   }
 
   # Environment configuration (build environment details)
