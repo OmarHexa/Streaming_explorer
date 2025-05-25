@@ -19,7 +19,7 @@ Data/
 .ipynb_checkpoints
 
 # Environments
-.env
+./.env
 *venv
 *.crt
 *.key

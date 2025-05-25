@@ -38,7 +38,7 @@ phases:
       # Copy all necessary files from your repository into the 'deploy_artifact' directory
       # These paths are relative to the root of your Git repository.
       - cp docker-compose.aws.yaml deploy_artifact/docker-compose.aws.yaml
-      - cp .env.example deploy_artifact/.env.example # Copy a template for .env
+      - cp terraform/.env.example deploy_artifact/.env.example # Copy a template for .env
       - cp nginx/nginx.conf deploy_artifact/nginx/nginx.conf
       - cp -r nginx/certificate/* deploy_artifact/nginx/certificate/ # Copy SSL certs (ensure they are in your repo)
       - cp -r src/init/* deploy_artifact/src/init/ # Copy database init scripts/Dockerfile
