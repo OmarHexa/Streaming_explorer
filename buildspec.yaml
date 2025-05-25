@@ -40,11 +40,12 @@ phases:
       - cp docker-compose.aws.yaml deploy_artifact/docker-compose.aws.yaml
       - cp terraform/.env deploy_artifact/.env.example # Copy a template for .env
       - cp nginx/nginx.conf deploy_artifact/nginx/nginx.conf
+      - chmod +x nginx/certificate.sh
+      - ./nginx/certificate.sh
       - cp -r nginx/certificate/* deploy_artifact/nginx/certificate/ # Copy SSL certs (ensure they are in your repo)
       - cp -r src/init/* deploy_artifact/src/init/ # Copy database init scripts/Dockerfile
       - cp appspec.yaml deploy_artifact/appspec.yaml
-      - cp -r scripts/* deploy_artifact/scripts/ # Copy all deployment scripts
-  post_build:
+      - cp -r scripts/* deploy_artifact/scripts/ # Copy all deployment scripts  post_build:
     commands:
       # --- Push Backend Image to ECR ---
       - echo "Pushing the backend Docker image to ECR..."
