@@ -21,7 +21,7 @@ output "codebuild_project_arn" {
 
 output "codedeploy_application_name" {
   description = "The name of the CodeDeploy application."
-  value       = aws_codedeploy_application.app_application.name
+  value       = aws_codedeploy_app.app_application.name
 }
 
 output "codedeploy_deployment_group_name" {
@@ -31,11 +31,11 @@ output "codedeploy_deployment_group_name" {
 
 output "ec2_public_ip" {
   description = "The public IP address of the EC2 instance."
-  value       = aws_instance.app_server.public_ip
+  value       = aws_instance.streamingexplorer.public_ip
 }
 
 output "ec2_public_dns" {
   description = "The public DNS name of the EC2 instance."
-  value       = aws_instance.app_server.public_dns
+  value       = aws_instance.streamingexplorer.public_dns
 }
 

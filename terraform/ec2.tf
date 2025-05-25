@@ -33,35 +33,7 @@ resource "aws_instance" "streamingexplorer" {
   subnet_id = aws_subnet.app_subnet.id
   iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
   # User data script to install Docker, Docker Compose, and CodeDeploy Agent on first boot.
-  user_data = <<-EOF
-              #!/bin/bash
-              echo "Starting user data script..."
-              # Update all installed packages
-              yum update -y
-
-              # Install Docker and Git
-              echo "Installing Docker and Git..."
-              yum install -y docker git
-              service docker start
-              usermod -a -G docker ec2-user # Add ec2-user to the docker group so it can run docker commands without sudo
-
-              # Install Docker Compose
-              echo "Installing Docker Compose..."
-              curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-              chmod +x /usr/local/bin/docker-compose
-
-              # Install CodeDeploy Agent
-              echo "Installing CodeDeploy Agent..."
-              yum install -y ruby # Ruby is a dependency for the CodeDeploy agent installer
-              wget https://aws-codedeploy-${var.aws_region}.s3.${var.aws_region}.amazonaws.com/latest/install -O /tmp/install
-              chmod +x /tmp/install
-              /tmp/install auto # Install and start the agent, configure it to start on boot
-              service codedeploy-agent start
-              chkconfig codedeploy-agent on
-
-              echo "User data script finished."
-              EOF
-
+  user_data = templatefile(("${path.module}/user_data.sh.tpl"),{aws_region = var.aws_region})
   tags = {
     Name        = "${var.project_name}-app-server"
     Environment = "Dev"

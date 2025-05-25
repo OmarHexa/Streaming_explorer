@@ -11,7 +11,7 @@ resource "aws_vpc" "app_vpc" {
 resource "aws_subnet" "app_subnet" {
   vpc_id            = aws_vpc.app_vpc.id
   cidr_block        = cidrsubnet(aws_vpc.app_vpc.cidr_block, 3, 1)
-  availability_zone = "eu-central-1"
+  availability_zone = "eu-central-1a"
 }
 
 # --- Internet Gateway Configuration ---

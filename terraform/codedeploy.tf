@@ -31,7 +31,7 @@ resource "aws_iam_role_policy_attachment" "codedeploy_managed_policy" {
 
 # --- CodeDeploy Application ---
 # A logical entity that represents the application you want to deploy.
-resource "aws_codedeploy_application" "app_application" {
+resource "aws_codedeploy_app" "app_application" {
   name = "${var.project_name}-application"
 
   tags = {
@@ -43,7 +43,7 @@ resource "aws_codedeploy_application" "app_application" {
 # --- CodeDeploy Deployment Group ---
 # Defines the set of EC2 instances to deploy to and the deployment configuration.
 resource "aws_codedeploy_deployment_group" "app_deployment_group" {
-  app_name               = aws_codedeploy_application.app_application.name
+  app_name               = aws_codedeploy_app.app_application.name
   deployment_group_name  = "${var.project_name}-deployment-group"
   service_role_arn       = aws_iam_role.codedeploy_service_role.arn
   deployment_config_name = "CodeDeployDefault.OneAtATime" # Or CodeDeployDefault.AllAtOnce for faster but less safe deployments
@@ -59,8 +59,8 @@ resource "aws_codedeploy_deployment_group" "app_deployment_group" {
 
   # Configure deployment style (e.g., in-place, blue/green)
   deployment_style {
-    deployment_option = "IN_PLACE" # Deploy directly onto the existing instances
-    deployment_type   = "ONE_AT_A_TIME" # Deploy to one instance at a time
+    deployment_option = "WITHOUT_TRAFFIC_CONTROL" # Deploy directly onto the existing instances
+    deployment_type   = "IN_PLACE" # Deploy to one instance at a time
   }
 
   # Automatic rollback on deployment failure
